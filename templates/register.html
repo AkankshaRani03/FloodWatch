@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - FloodWatch Command Center</title>
+
+    <link rel="stylesheet"
+href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+    <main class="auth-shell">
+        <section class="brand-panel">
+            <div class="brand-mark">FW</div>
+            <p class="eyebrow">Partner Onboarding</p>
+            <h1>Join the flood response intelligence network.</h1>
+            <p>Create a role-aware account for coordinated location assessment, alerts, and community readiness workflows.</p>
+            <div class="role-list">
+                <span>Citizens and local residents</span>
+                <span>NGO and community partners</span>
+                <span>Government and emergency authorities</span>
+            </div>
+        </section>
+
+        <section class="auth-panel">
+            <div class="auth-header">
+                <p class="eyebrow">Secure Registration</p>
+                <h2>Create Account</h2>
+                <p>Set up your operational profile for FloodWatch access.</p>
+            </div>
+
+            <div class="loading-spinner" id="loading"></div>
+            <div class="error-message" id="error"></div>
+            <div class="success-message" id="success"></div>
+
+            <form id="registerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Choose username" required autocomplete="username" minlength="3" maxlength="50">
+                        <div class="field-error" id="usernameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="name@example.org" required autocomplete="email">
+                        <div class="field-error" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Mobile number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select id="role" name="role" required>
+                            <option value="citizen">Citizen</option>
+                            <option value="community_partner">Community Partner</option>
+                            <option value="government">Government Authority</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sub_role">Sub Role</label>
+                        <select id="sub_role" name="sub_role">
+                            <option value="">Select</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="district">District</label>
+                        <input type="text" id="district" name="district" placeholder="District">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" placeholder="City">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="area">Area</label>
+                        <input type="text" id="area" name="area" placeholder="Area or locality">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Minimum 6 characters" required autocomplete="new-password" minlength="6">
+                        <div class="strength-bar">
+                            <div class="strength-bar-fill" id="strengthBar"></div>
+                        </div>
+                        <div class="field-error" id="passwordError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="retype_password">Confirm Password</label>
+                        <input type="password" id="retype_password" name="retype_password" placeholder="Re-enter password" required autocomplete="new-password">
+                        <div class="field-error" id="retype_passwordError"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="registerButton">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already registered? <a href="/login">Login here</a></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+</body>
+</html>

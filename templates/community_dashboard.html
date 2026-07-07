@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>
+FloodWatch Community Command Center
+</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/common.css') }}">
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/community.css') }}">
+
+</head>
+
+<body>
+
+<div class="app-shell">
+
+<!-- ================================================= -->
+
+<header class="topbar">
+
+<a href="/" class="brand-linkup">
+<div class="brand-lockup">
+
+<div class="brand-mark">
+
+<i class="fa-solid fa-people-group"></i>
+
+</div>
+
+<div>
+
+<p class="eyebrow">
+
+FloodWatch Community Network
+
+</p>
+
+<h1>
+
+Community Command Center
+
+</h1>
+
+<p class="subtitle">
+
+Volunteer Coordination • Incident Verification • Relief Operations
+
+</p>
+
+</div>
+
+</div>
+</a>
+
+<div class="topbar-actions">
+
+<a href="/notifications" class="notification-link">
+    <i class="fa-solid fa-bell"></i>
+    Alerts
+    <span id="notificationBadge" class="notification-badge">0</span>
+</a>
+
+<div class="user-chip">
+
+<span class="avatar">
+
+{{ user.username[0]|upper }}
+
+</span>
+
+<span>
+
+<strong>
+
+{{ user.username }}
+
+</strong>
+
+<small>
+
+{{ user.sub_role.replace('_',' ').title() }}
+
+</small>
+
+</span>
+
+</div>
+
+<a href="/logout"
+class="logout-button">
+
+Logout
+
+</a>
+
+</div>
+
+</header>
+
+<!-- ================================================= -->
+<!-- ROLE SELECT CARDS                                  -->
+<!-- Click a card to reveal its task panel further down -->
+<!-- the page (below the map section).                  -->
+<!-- ================================================= -->
+
+<section class="status-grid role-select-grid">
+
+<div class="status-tile role-select-card" data-role="ngo" role="button" tabindex="0">
+
+<i class="fa-solid fa-hand-holding-heart fa-2x"></i>
+
+<span class="status-label">NGO</span>
+
+<strong>Relief Tasks</strong>
+
+<small>Camps, supplies, medical teams</small>
+
+</div>
+
+<div class="status-tile role-select-card" data-role="youth_organization" role="button" tabindex="0">
+
+<i class="fa-solid fa-graduation-cap fa-2x"></i>
+
+<span class="status-label">Youth Organization</span>
+
+<strong>Volunteer Tasks</strong>
+
+<small>Awareness drives, field teams</small>
+
+</div>
+
+<div class="status-tile role-select-card accent" data-role="colony_volunteer" role="button" tabindex="0">
+
+<i class="fa-solid fa-house-user fa-2x"></i>
+
+<span class="status-label">Colony Volunteer</span>
+
+<strong>Local Tasks</strong>
+
+<small>Nearby families, assistance</small>
+
+</div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- RISK CHECK + MAP                                   -->
+<!-- ================================================= -->
+
+<main class="command-layout">
+
+<!-- LEFT SIDE — Check Flood Risk (same panel as the citizen dashboard) -->
+
+<section class="operations-panel">
+
+<div class="panel-header">
+
+<p class="eyebrow">Risk Assessment</p>
+
+<h2>Check Flood Risk</h2>
+
+</div>
+
+<div class="input-grid">
+
+<div class="input-group">
+
+<label>Latitude</label>
+
+<input type="number" id="latitude" value="17.385" step="0.0001">
+
+</div>
+
+<div class="input-group">
+
+<label>Longitude</label>
+
+<input type="number" id="longitude" value="78.4867" step="0.0001">
+
+</div>
+
+</div>
+
+<button id="predictBtn" class="btn-primary">
+
+<i class="fa-solid fa-magnifying-glass-location"></i>
+
+Run Risk Assessment
+
+</button>
+
+<div class="quick-locations">
+
+<p>Priority Locations</p>
+
+<div class="quick-location-grid">
+
+<button class="btn-secondary" onclick="selectLocation(17.385,78.4867,'Hyderabad')">📍 Hyderabad</button>
+
+<button class="btn-secondary" onclick="selectLocation(19.076,72.8777,'Mumbai')">📍 Mumbai</button>
+
+<button class="btn-secondary" onclick="selectLocation(13.0827,80.2707,'Chennai')">📍 Chennai</button>
+
+<button class="btn-secondary" onclick="selectLocation(28.7041,77.1025,'Delhi')">📍 Delhi</button>
+
+</div>
+
+</div>
+
+<div class="card loading-card hidden" id="loadingCard">
+
+<div class="loading-spinner"></div>
+
+<p>Running AI Prediction...</p>
+
+</div>
+
+<div class="card results-card hidden" id="resultsCard">
+
+<div class="panel-header compact">
+
+<h2>Prediction Result</h2>
+
+</div>
+
+<div class="risk-indicator">
+
+<div id="riskPercentage" class="placeholder">--</div>
+
+<div class="risk-gauge">
+
+<div id="gaugeFill" class="gauge-fill"></div>
+
+</div>
+
+</div>
+
+<div class="risk-badge" id="riskBadge">
+
+<span id="riskLevel">--</span>
+
+</div>
+
+<div class="features-grid">
+
+<div class="feature-item">
+
+<div class="feature-label">Rainfall</div>
+
+<div id="rainfall" class="feature-value">--</div>
+
+</div>
+
+<div class="feature-item">
+
+<div class="feature-label">Soil Moisture</div>
+
+<div id="soilMoisture" class="feature-value">--</div>
+
+</div>
+
+<div class="feature-item">
+
+<div class="feature-label">Elevation</div>
+
+<div id="elevation" class="feature-value">--</div>
+
+</div>
+
+<div class="feature-item">
+
+<div class="feature-label">Slope</div>
+
+<div id="slope" class="feature-value">--</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- MAP STARTS HERE -->
+
+<section class="map-panel">
+
+<div class="panel-header map-heading">
+
+<div>
+
+<p class="eyebrow">Operations Map</p>
+
+<h2>Live Community Monitoring</h2>
+
+</div>
+
+<div class="map-legend">
+
+<div class="legend-item">
+
+<span class="legend-color high"></span>
+
+<span>Citizen Reports</span>
+
+</div>
+
+<div class="legend-item">
+
+<span class="legend-color medium"></span>
+
+<span>Volunteers</span>
+
+</div>
+
+<div class="legend-item">
+
+<span class="legend-color low"></span>
+
+<span>Shelters</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="communityMap"></div>
+
+<div class="map-footer">
+
+<i class="fa-solid fa-circle-info"></i>
+
+<span>Click any incident marker to view details and assign volunteers.</span>
+
+</div>
+
+</section>
+
+</main>
+
+<!-- ========================================================= -->
+<!-- COMMUNITY OPERATIONS (moved here from beside the map) -->
+<!-- ========================================================= -->
+
+<section>
+
+    <div class="service-card full-width-card">
+
+        <div class="panel-header compact">
+
+            <h2>
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                Incident Queue
+
+            </h2>
+
+        </div>
+
+        <div id="reportsContainer">
+
+            <p style="text-align:center;color:#999;padding:20px;">
+
+                Loading incidents...
+
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================================================= -->
+<!-- CITIZEN REPORTS & RESOURCE REQUESTS -->
+<!-- ========================================================= -->
+
+<section class="services-grid">
+
+    <!-- Citizen Reports -->
+
+    <div class="service-card">
+
+        <div class="panel-header compact">
+
+            <h2>
+                <i class="fa-solid fa-file-circle-exclamation"></i>
+                Citizen Reports
+            </h2>
+
+        </div>
+
+        <table class="dashboard-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Incident</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+
+                    <td>Waterlogging</td>
+
+                    <td>Tarnaka</td>
+
+                    <td>
+
+                        <span class="badge-high">
+
+                            Pending
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="table-btn">
+
+                            View
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Tree Fall</td>
+
+                    <td>Habsiguda</td>
+
+                    <td>
+
+                        <span class="badge-medium">
+
+                            Assigned
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="table-btn">
+
+                            Details
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <td>Road Block</td>
+
+                    <td>Uppal</td>
+
+                    <td>
+
+                        <span class="badge-low">
+
+                            Resolved
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button class="table-btn">
+
+                            View
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- Resource Requests -->
+
+    <div class="service-card">
+
+        <div class="panel-header compact">
+
+            <h2>
+
+                <i class="fa-solid fa-box-open"></i>
+
+                Resource Requests
+
+            </h2>
+
+        </div>
+
+        <div class="resource-card">
+
+            <div>
+
+                <strong>Food Packets</strong>
+
+                <small>Tarnaka Shelter</small>
+
+            </div>
+
+            <span>150</span>
+
+        </div>
+
+        <div class="resource-card">
+
+            <div>
+
+                <strong>Water Bottles</strong>
+
+                <small>Uppal Camp</small>
+
+            </div>
+
+            <span>300</span>
+
+        </div>
+
+        <div class="resource-card">
+
+            <div>
+
+                <strong>Medical Kits</strong>
+
+                <small>Emergency Team</small>
+
+            </div>
+
+            <span>28</span>
+
+        </div>
+
+        <div class="resource-card">
+
+            <div>
+
+                <strong>Blankets</strong>
+
+                <small>Relief Centre</small>
+
+            </div>
+
+            <span>95</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- ACTIVITY FEED -->
+<!-- ========================================================= -->
+
+<section class="threshold-section">
+
+    <div class="panel-header">
+
+        <p class="eyebrow">
+
+            Operations Log
+
+        </p>
+
+        <h2>
+
+            Recent Activity
+
+        </h2>
+
+    </div>
+
+    <div class="activity-feed" id="activityFeed">
+
+        <div class="activity-item">
+
+            <i class="fa-solid fa-user-check"></i>
+
+            <div>
+
+                <strong>
+
+                    Volunteer Rahul accepted Waterlogging incident.
+
+                </strong>
+
+                <small>
+
+                    2 minutes ago
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <div class="activity-item">
+
+            <i class="fa-solid fa-camera"></i>
+
+            <div>
+
+                <strong>
+
+                    Citizen uploaded flood evidence.
+
+                </strong>
+
+                <small>
+
+                    6 minutes ago
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <div class="activity-item">
+
+            <i class="fa-solid fa-house"></i>
+
+            <div>
+
+                <strong>
+
+                    Relief Shelter activated at Tarnaka.
+
+                </strong>
+
+                <small>
+
+                    15 minutes ago
+
+                </small>
+
+            </div>
+
+        </div>
+
+        <div class="activity-item">
+
+            <i class="fa-solid fa-check"></i>
+
+            <div>
+
+                <strong>
+
+                    Incident #128 marked as resolved.
+
+                </strong>
+
+                <small>
+
+                    21 minutes ago
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ========================================================= -->
+<!-- SUB ROLE WIDGETS -->
+<!-- ========================================================= -->
+
+<!-- ========================================================= -->
+<!-- COMMUNITY SUB ROLE OPERATIONS -->
+<!-- All three panels are always in the page now (rather than  -->
+<!-- being gated by the backend's user.sub_role) so that any    -->
+<!-- of the NGO / Youth Org / Colony Volunteer cards above can  -->
+<!-- reveal the matching panel on click. Each starts hidden.    -->
+<!-- Each card below is clickable: it opens the shared modal    -->
+<!-- (#cardModalOverlay, wired in common.js + community.js)     -->
+<!-- with either a detail view or a quick-add form.             -->
+<!-- ========================================================= -->
+
+<div id="subRolePanels">
+
+<section class="service-card sub-role-panel hidden" data-sub-role="ngo" id="panel-ngo">
+
+    <div class="panel-header">
+        <p class="eyebrow">NGO Operations</p>
+        <h2>Relief Management Dashboard</h2>
+    </div>
+
+    <div class="threshold-grid">
+
+        <div class="threshold-card" data-card-id="relief_camps" data-card-type="view">
+            <span>🏕 Relief Camps</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card is-add" data-card-id="add_relief_camp" data-card-type="add">
+            <span><i class="fa-solid fa-circle-plus"></i> Add Relief Camp</span>
+            <strong>Add</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="medical_teams" data-card-type="view">
+            <span>🏥 Medical Teams</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card is-add" data-card-id="supplies" data-card-type="add">
+            <span><i class="fa-solid fa-circle-plus"></i> Supplies</span>
+            <strong>Add</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="shelter_capacity" data-card-type="view">
+            <span>🏠 Shelter Capacity</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="donations_received" data-card-type="view">
+            <span>💰 Donations Received</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="volunteers_assigned" data-card-type="view">
+            <span>🙋 Volunteers</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="relief_vehicles" data-card-type="view">
+            <span>🚚 Relief Vehicles</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="emergency_contacts" data-card-type="view">
+            <span>📞 Emergency Contacts</span>
+            <strong>__</strong>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="service-card sub-role-panel hidden" data-sub-role="youth_organization" id="panel-youth_organization">
+
+    <div class="panel-header">
+        <p class="eyebrow">Youth Organization</p>
+        <h2>Volunteer Coordination</h2>
+    </div>
+
+    <div class="threshold-grid">
+
+        <div class="threshold-card" data-card-id="awareness_drives" data-card-type="view">
+            <span>📢 Awareness Drives</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="field_verification" data-card-type="view">
+            <span>✅ Field Verifications</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="teams_active" data-card-type="view">
+            <span>👥 Teams</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card is-add" data-card-id="events" data-card-type="add">
+            <span><i class="fa-solid fa-circle-plus"></i> Events</span>
+            <strong>Add</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="student_volunteers" data-card-type="view">
+            <span>🎓 Student Volunteers</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="pending_verifications" data-card-type="view">
+            <span>⏳ Pending Verifications</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="social_media_outreach" data-card-type="view">
+            <span>📱 Social Media Outreach</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="blood_donation_camps" data-card-type="view">
+            <span>🩸 Blood / Food / Cloth Donations</span>
+            <strong>__</strong>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="service-card sub-role-panel hidden" data-sub-role="colony_volunteer" id="panel-colony_volunteer">
+
+    <div class="panel-header">
+        <p class="eyebrow">Colony Volunteer</p>
+        <h2>Local Response Dashboard</h2>
+    </div>
+
+    <div class="threshold-grid">
+
+        <div class="threshold-card" data-card-id="assigned_tasks" data-card-type="view">
+            <span>📌 Assigned Tasks</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="nearby_incidents" data-card-type="view">
+            <span>📍 Nearby Incidents</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="reports_verified" data-card-type="view">
+            <span>✔ Reports Verified</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card is-add" data-card-id="availability" data-card-type="add">
+            <span><i class="fa-solid fa-circle-plus"></i> Availability</span>
+            <strong>Add</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="nearby_families" data-card-type="view">
+            <span>👪 Nearby Families</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="elderly_assistance" data-card-type="view">
+            <span>👴 Elderly Assistance</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="food_delivery" data-card-type="view">
+            <span>🍽 Food Delivery</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="first_aid_requests" data-card-type="view">
+            <span>🩹 First Aid Requests</span>
+            <strong>__</strong>
+        </div>
+
+        <div class="threshold-card" data-card-id="water_distribution" data-card-type="view">
+            <span>💧 Water Distribution</span>
+            <strong>__</strong>
+        </div>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<footer class="footer">
+
+<strong>
+
+FloodWatch Community Command Center
+
+</strong>
+
+</footer>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- SHARED CARD MODAL (used by every sub-role panel)           -->
+<!-- ========================================================= -->
+
+<div class="modal-overlay" id="cardModalOverlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h3 id="modalTitle">Details</h3>
+
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+
+        </div>
+
+        <div class="modal-body" id="modalBody">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/community.js') }}"></script>
+
+</body>
+
+</html>

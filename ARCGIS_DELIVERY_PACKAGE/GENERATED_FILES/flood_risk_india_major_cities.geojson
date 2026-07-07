@@ -1,0 +1,17 @@
+{
+"type": "FeatureCollection",
+"name": "flood_risk_india_major_cities",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "location": "Mumbai", "latitude": 19.076, "longitude": 72.8777, "flood_prob": 0.977, "risk_level": "HIGH", "rainfall": 0.01, "soil_moist": 0.1152, "elevation": 14.74, "slope": 3.15 }, "geometry": { "type": "Point", "coordinates": [ 72.8777, 19.076 ] } },
+{ "type": "Feature", "properties": { "location": "Delhi", "latitude": 28.7041, "longitude": 77.1025, "flood_prob": 0.035, "risk_level": "LOW", "rainfall": 1.57, "soil_moist": 0.1212, "elevation": 216.03, "slope": 3.28 }, "geometry": { "type": "Point", "coordinates": [ 77.1025, 28.7041 ] } },
+{ "type": "Feature", "properties": { "location": "Bangalore", "latitude": 12.9716, "longitude": 77.5946, "flood_prob": 0.041, "risk_level": "LOW", "rainfall": 6.49, "soil_moist": 0.462, "elevation": 897.37, "slope": 3.26 }, "geometry": { "type": "Point", "coordinates": [ 77.5946, 12.9716 ] } },
+{ "type": "Feature", "properties": { "location": "Hyderabad", "latitude": 17.385, "longitude": 78.4867, "flood_prob": 0.026, "risk_level": "LOW", "rainfall": 0.91, "soil_moist": 0.2051, "elevation": 522.77, "slope": 3.05 }, "geometry": { "type": "Point", "coordinates": [ 78.4867, 17.385 ] } },
+{ "type": "Feature", "properties": { "location": "Chennai", "latitude": 13.0827, "longitude": 80.2707, "flood_prob": 0.968, "risk_level": "HIGH", "rainfall": 36.01, "soil_moist": 0.4041, "elevation": 6.4, "slope": 1.56 }, "geometry": { "type": "Point", "coordinates": [ 80.2707, 13.0827 ] } },
+{ "type": "Feature", "properties": { "location": "Kolkata", "latitude": 22.5726, "longitude": 88.3639, "flood_prob": 0.072, "risk_level": "LOW", "rainfall": 0.02, "soil_moist": 0.1566, "elevation": 6.88, "slope": 2.56 }, "geometry": { "type": "Point", "coordinates": [ 88.3639, 22.5726 ] } },
+{ "type": "Feature", "properties": { "location": "Pune", "latitude": 18.5204, "longitude": 73.8567, "flood_prob": 0.029, "risk_level": "LOW", "rainfall": 0.0, "soil_moist": 0.2095, "elevation": 589.79, "slope": 3.8 }, "geometry": { "type": "Point", "coordinates": [ 73.8567, 18.5204 ] } },
+{ "type": "Feature", "properties": { "location": "Ahmedabad", "latitude": 23.0225, "longitude": 72.5714, "flood_prob": 0.01, "risk_level": "LOW", "rainfall": 2.66, "soil_moist": 0.1718, "elevation": 49.22, "slope": 3.0 }, "geometry": { "type": "Point", "coordinates": [ 72.5714, 23.0225 ] } },
+{ "type": "Feature", "properties": { "location": "Jaipur", "latitude": 26.9124, "longitude": 75.7873, "flood_prob": 0.016, "risk_level": "LOW", "rainfall": 0.23, "soil_moist": 0.1681, "elevation": 438.03, "slope": 4.83 }, "geometry": { "type": "Point", "coordinates": [ 75.7873, 26.9124 ] } },
+{ "type": "Feature", "properties": { "location": "Lucknow", "latitude": 26.8467, "longitude": 80.9462, "flood_prob": 0.024, "risk_level": "LOW", "rainfall": 0.03, "soil_moist": 0.1688, "elevation": 120.06, "slope": 3.04 }, "geometry": { "type": "Point", "coordinates": [ 80.9462, 26.8467 ] } }
+]
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FloodWatch — Flood Monitoring & Early Warning System</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+ 
+<div class="app-shell">
+ 
+    <!-- ==========================================================
+         TOP BAR
+         ========================================================== -->
+    <header class="topbar">
+        <a href="/" class="brand-linkup">
+            <div class="brand-lockup">
+                <div class="brand-mark">FW</div>
+                <div>
+                    <div class="eyebrow">Early Warning Network</div>
+                    <h1>FloodWatch</h1>
+                    <p class="subtitle">Real-time flood monitoring &amp; response coordination</p>
+                </div>
+            </div>
+        </a>
+ 
+        <div class="topbar-actions">
+            <a href="#portals" class="info-chip">4 portals · one platform</a>
+            <a href="/login" class="logout-button" id="loginBtn" style="background:var(--primary)">Login</a>
+        </div>
+    </header>
+ 
+    <!-- ==========================================================
+         HERO
+         ========================================================== -->
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="badge badge-info">Live system status: <span id="heroStatus">checking…</span></span>
+            <h2>Know a flood is coming before the water does.</h2>
+            <p>
+                FloodWatch links citizen reports, community watch groups, and
+                government response teams on one map — so warnings move as
+                fast as the water does.
+            </p>
+            <div class="hero-actions">
+                <a href="/report" class="btn-primary">Report an incident</a>
+                <a href="#map-preview" class="btn-secondary">View live map</a>
+            </div>
+        </div>
+ 
+        <div class="hero-stats" id="heroStats">
+            <div class="stat-card">
+                <strong id="statAlerts">--</strong>
+                <span>Active alerts</span>
+            </div>
+            <div class="stat-card">
+                <strong id="statRegions">--</strong>
+                <span>Regions monitored</span>
+            </div>
+            <div class="stat-card">
+                <strong id="statReports">--</strong>
+                <span>Reports this week</span>
+            </div>
+            <div class="stat-card">
+                <strong id="statTeams">--</strong>
+                <span>Response teams online</span>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- ==========================================================
+         ROLE PORTALS
+         ========================================================== -->
+    <section id="portals" class="portals-section">
+        <div class="section-heading">
+            <h3>Choose your portal</h3>
+            <p class="subtitle">Every role sees exactly what it needs — nothing more.</p>
+        </div>
+ 
+        <div class="portal-grid four-column">
+ 
+            <a href="/citizen" class="portal-card">
+                <div class="portal-icon" style="background:#dbeafe;color:#1e40af;">👤</div>
+                <h4>Citizen</h4>
+                <p>Report waterlogging, view nearby alerts, and get evacuation guidance.</p>
+                <span class="portal-link">Open Citizen Dashboard →</span>
+            </a>
+ 
+            <a href="/community" class="portal-card">
+                <div class="portal-icon" style="background:#dcfce7;color:#166534;">🤝</div>
+                <h4>Community</h4>
+                <p>Coordinate local volunteers, verify ground reports, manage shelters.</p>
+                <span class="portal-link">Open Community Dashboard →</span>
+            </a>
+ 
+            <a href="/government" class="portal-card">
+                <div class="portal-icon" style="background:#fef3c7;color:#92400e;">🏛️</div>
+                <h4>Government</h4>
+                <p>Monitor district-wide risk, dispatch response teams, issue alerts.</p>
+                <span class="portal-link">Open Government Dashboard →</span>
+            </a>
+ 
+            <a href="/admin" class="portal-card">
+                <div class="portal-icon" style="background:#fee2e2;color:#991b1b;">⚙️</div>
+                <h4>Admin</h4>
+                <p>Manage users, sensor feeds, and platform-wide configuration.</p>
+                <span class="portal-link">Open Admin Dashboard →</span>
+            </a>
+ 
+        </div>
+    </section>
+ 
+    <!-- ==========================================================
+         LIVE MAP PREVIEW
+         ========================================================== -->
+    <section id="map-preview" class="map-preview-section">
+        <div class="section-heading">
+            <h3>Live risk map</h3>
+            <p class="subtitle">Tap anywhere to preview conditions for that location.</p>
+        </div>
+        <div id="map"></div>
+    </section>
+ 
+    <!-- ==========================================================
+         RECENT ACTIVITY
+         ========================================================== -->
+    <section class="activity-section">
+        <div class="section-heading">
+            <h3>Recent activity</h3>
+        </div>
+        <table class="table" id="activityTable">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="activityBody">
+                <tr>
+                    <td colspan="4" class="empty-state">
+                        <h3>No recent activity yet</h3>
+                        <p>New reports and alerts will appear here as they come in.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+ 
+    <!-- ==========================================================
+         FOOTER
+         ========================================================== -->
+    <footer class="footer">
+        FloodWatch — built for faster, safer flood response. &copy; <span id="year"></span>
+    </footer>
+ 
+</div>
+ 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>

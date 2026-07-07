@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "flood_predictions",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "location": "Hyderabad", "latitude": 17.385, "longitude": 78.4867, "flood_prob": 0.026, "risk_level": "LOW", "rainfall": 0.92, "soil_moist": 0.2049, "elevation": 523.64, "slope": 3.07 }, "geometry": { "type": "Point", "coordinates": [ 78.4867, 17.385 ] } },
+{ "type": "Feature", "properties": { "location": "Mumbai", "latitude": 19.076, "longitude": 72.8777, "flood_prob": 0.977, "risk_level": "HIGH", "rainfall": 0.01, "soil_moist": 0.1152, "elevation": 14.74, "slope": 3.15 }, "geometry": { "type": "Point", "coordinates": [ 72.8777, 19.076 ] } },
+{ "type": "Feature", "properties": { "location": "Chennai", "latitude": 13.0827, "longitude": 80.2707, "flood_prob": 0.968, "risk_level": "HIGH", "rainfall": 36.01, "soil_moist": 0.4041, "elevation": 6.4, "slope": 1.56 }, "geometry": { "type": "Point", "coordinates": [ 80.2707, 13.0827 ] } }
+]
+}

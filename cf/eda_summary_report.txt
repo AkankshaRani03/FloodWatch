@@ -1,0 +1,31 @@
+============================================================
+FLOOD PREDICTION DATASET - EDA SUMMARY
+============================================================
+
+Dataset Size: 1250 samples, 10 features
+
+Features: rainfall_7d_mm, soil_moisture, elevation_m, slope_deg
+
+Class Distribution:
+  No Flood: 625 (50.0%)
+  Flood:    625 (50.0%)
+
+Missing Values: 0 total
+
+Feature Statistics:
+  rainfall_7d_mm:
+    Mean: 65.7110, Std: 67.5610
+    Range: [0.0000, 745.5676]
+  soil_moisture:
+    Mean: 0.3718, Std: 0.0924
+    Range: [0.0580, 0.4916]
+  elevation_m:
+    Mean: 261.8377, Std: 271.6170
+    Range: [3.4171, 906.4442]
+  slope_deg:
+    Mean: 3.0607, Std: 1.2908
+    Range: [1.5101, 7.4437]
+
+============================================================
+EDA Complete!
+============================================================

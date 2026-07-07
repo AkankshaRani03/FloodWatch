@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FloodWatch Admin Panel</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+<!-- ===================== TOP HEADER ===================== -->
+
+<header class="topbar">
+
+    <a href="/" class="brand-linkup">
+        <div class="brand-lockup">
+
+            <div class="brand-mark">
+                <i class="fa-solid fa-gears"></i>
+            </div>
+
+            <div>
+
+                <p class="eyebrow">
+                    Platform Administration
+                </p>
+
+                <h1>
+                    FloodWatch Admin Panel
+                </h1>
+
+                <p class="subtitle">
+                    User Management • System Configuration • Sensor Integration • Analytics
+                </p>
+
+            </div>
+
+        </div>
+    </a>
+
+    <div class="topbar-actions">
+
+        <a href="/notifications"
+           class="notification-link">
+
+            <i class="fa-solid fa-bell"></i>
+
+            Alerts
+
+            <span
+                id="notificationBadge"
+                class="notification-badge">
+                0
+            </span>
+
+        </a>
+
+        <div class="user-chip">
+
+            <span class="avatar">
+                {{ user.username[0]|upper }}
+            </span>
+
+            <span>
+
+                <strong>
+                    {{ user.username }}
+                </strong>
+
+                <small>
+                    Administrator
+                </small>
+
+            </span>
+
+        </div>
+
+        <a
+            href="/logout"
+            class="logout-button">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</header>
+
+<!-- ===================== MAIN CONTENT ===================== -->
+
+<section class="main-content">
+
+    <div class="page-header">
+        <h1>Administrator Dashboard</h1>
+        <p>Platform configuration, user management, and system monitoring</p>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>User Management</h3>
+                <i class="fa-solid fa-users-gear"></i>
+            </div>
+            <div class="card-body">
+                <p>Create, edit, and manage user accounts and roles</p>
+                <p class="placeholder">Users List</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>System Configuration</h3>
+                <i class="fa-solid fa-sliders"></i>
+            </div>
+            <div class="card-body">
+                <p>Configure platform settings and parameters</p>
+                <p class="placeholder">System Settings</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Sensor Integration</h3>
+                <i class="fa-solid fa-wifi"></i>
+            </div>
+            <div class="card-body">
+                <p>Manage IoT sensors and data feeds</p>
+                <p class="placeholder">Sensors Dashboard</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Analytics</h3>
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div class="card-body">
+                <p>View platform analytics and usage statistics</p>
+                <p class="placeholder">Analytics Dashboard</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+
+<footer class="footer">
+    FloodWatch — Platform Administration. &copy; <span id="year"></span>
+</footer>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</body>
+
+</html>

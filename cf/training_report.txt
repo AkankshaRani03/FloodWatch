@@ -1,0 +1,25 @@
+============================================================
+FLOOD PREDICTION MODEL - TRAINING REPORT
+============================================================
+
+Model: Random Forest Classifier
+Training samples: 1000
+Test samples: 250
+
+Hyperparameters:
+  n_estimators: 100
+  max_depth: 10
+  min_samples_split: 5
+  min_samples_leaf: 2
+
+Performance Metrics:
+  Train Accuracy: 0.9860
+  Test Accuracy:  0.9560
+  Train F1-Score: 0.9860
+  Test F1-Score:  0.9555
+  Train ROC-AUC:  0.9996
+  Test ROC-AUC:   0.9982
+
+✓ Model shows good generalization
+
+============================================================

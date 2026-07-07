@@ -1,0 +1,923 @@
+/* ============================================================
+   FloodWatch Community Dashboard Styles
+   ========================================================== */
+
+/* ============================================================
+   STATUS GRID
+   ========================================================== */
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.status-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.status-tile:hover {
+    transform: translateY(-2px);
+}
+
+.status-tile.accent {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.status-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.status-tile strong {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.status-tile small {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* ============================================================
+   ROLE SELECT CARDS (NGO / Youth Org / Colony Volunteer)
+   These reuse .status-tile as their base look but behave as
+   buttons that reveal a task panel further down the page.
+   ========================================================== */
+
+.role-select-card {
+    cursor: pointer;
+    user-select: none;
+}
+
+.role-select-card strong {
+    font-size: 1.15rem;
+}
+
+.role-select-card:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+}
+
+.role-select-card.active {
+    box-shadow:
+        0 0 0 3px rgba(255, 255, 255, 0.75),
+        0 10px 24px rgba(0, 0, 0, 0.22);
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   CHECK FLOOD RISK PANEL
+   (mirrors the citizen dashboard's risk-assessment panel)
+   ========================================================== */
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d9e2ec;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #1f2937;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #0f766e;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.14);
+}
+
+.quick-locations {
+    margin-top: 4px;
+}
+
+.quick-locations p {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 10px;
+}
+
+.loading-card {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 42px;
+    height: 42px;
+    margin: 10px auto 12px;
+    border: 4px solid #cffafe;
+    border-top-color: #0f766e;
+    border-radius: 50%;
+    animation: community-spin 0.9s linear infinite;
+}
+
+@keyframes community-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.results-card {
+    margin-top: 4px;
+}
+
+.risk-indicator {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.risk-percentage,
+.placeholder {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #0f766e;
+}
+
+.risk-gauge {
+    width: 100%;
+    height: 12px;
+    margin-top: 18px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.gauge-fill {
+    width: 0;
+    height: 100%;
+    transition: width 0.5s ease;
+    background: linear-gradient(90deg, #16a34a, #f59e0b, #dc2626);
+}
+
+.risk-badge {
+    margin: 18px auto;
+    width: max-content;
+    padding: 10px 24px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 700;
+    background: #16a34a;
+}
+
+.risk-low {
+    background: #16a34a;
+}
+
+.risk-medium {
+    background: #f59e0b;
+}
+
+.risk-high {
+    background: #dc2626;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.feature-item {
+    padding: 16px;
+    border-radius: 12px;
+    background: #f8fafc;
+    text-align: center;
+}
+
+.feature-label {
+    color: #64748b;
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+}
+
+.feature-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* ============================================================
+   COMMAND LAYOUT
+   ========================================================== */
+
+.command-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.operations-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ============================================================
+   PANELS & CARDS
+   ========================================================== */
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.panel-header h2 {
+    font-size: 1.3rem;
+    color: #1f2937;
+}
+
+.panel-header.compact {
+    margin-bottom: 16px;
+}
+
+.map-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0f766e;
+}
+
+.card {
+    background: white;
+    border: 1px solid #d9e2ec;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.incident-card {
+    background: white;
+    border: 1px solid #d9e2ec;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.incident-card:hover {
+    border-color: #0f766e;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.15);
+}
+
+.incident-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.incident-header h4 {
+    margin: 0;
+    color: #1f2937;
+}
+
+.incident-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* ============================================================
+   BADGES
+   ========================================================== */
+
+.badge-high {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-medium {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-low {
+    background: #dcfce7;
+    color: #166534;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ============================================================
+   VOLUNTEER CARDS
+   ========================================================== */
+
+.volunteer-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 3px solid #0f766e;
+    transition: all 0.3s ease;
+}
+
+.volunteer-card:hover {
+    background: #f1f5f9;
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.1);
+}
+
+.volunteer-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.volunteer-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.volunteer-info strong {
+    color: #1f2937;
+    font-size: 0.9rem;
+}
+
+.volunteer-info small {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.available {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.busy {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.offline {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+/* ============================================================
+   STATUS ROWS
+   ========================================================== */
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.status-row:last-child {
+    border-bottom: none;
+}
+
+.status-row strong {
+    font-size: 1.2rem;
+    color: #0f766e;
+}
+
+/* ============================================================
+   QUICK LOCATION GRID
+   ========================================================== */
+
+.quick-location-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: #0f766e;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0d6b62;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+}
+
+.btn-secondary {
+    background: #e0e7ff;
+    color: #0f766e;
+    border: 1px solid #c7d2fe;
+}
+
+.btn-secondary:hover {
+    background: #c7d2fe;
+}
+
+/* ============================================================
+   MAP PANEL
+   ========================================================== */
+
+.map-panel {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #d9e2ec;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 12px 0;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.legend-color.high {
+    background: #dc2626;
+}
+
+.legend-color.medium {
+    background: #f59e0b;
+}
+
+.legend-color.low {
+    background: #10b981;
+}
+
+#communityMap {
+    min-height: 590px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.map-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #64748b;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 6px;
+    margin-top: 12px;
+}
+
+/* ============================================================
+   SERVICES GRID
+   ========================================================== */
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.service-card {
+    background: white;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.service-card h2 {
+    font-size: 1.1rem;
+    margin: 0 0 16px 0;
+    color: #1f2937;
+}
+
+/* ============================================================
+   DASHBOARD TABLE
+   ========================================================== */
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.dashboard-table thead {
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.dashboard-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.dashboard-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+}
+
+.dashboard-table tr:hover {
+    background: #f8fafc;
+}
+
+.table-btn {
+    padding: 6px 12px;
+    background: #0f766e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.table-btn:hover {
+    background: #0d6b62;
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.2);
+}
+
+/* ============================================================
+   RESOURCE CARDS
+   ========================================================== */
+
+.resource-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border-left: 4px solid #0f766e;
+}
+
+.resource-card strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #1f2937;
+}
+
+.resource-card small {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.resource-card span {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f766e;
+}
+
+/* ============================================================
+   ACTIVITY FEED & THRESHOLD
+   ========================================================== */
+
+.threshold-section {
+    background: white;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.activity-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.activity-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border-left: 3px solid #0f766e;
+    border-radius: 6px;
+    align-items: flex-start;
+}
+
+.activity-item i {
+    color: #0f766e;
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+.activity-item strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #1f2937;
+    font-size: 0.95rem;
+}
+
+.activity-item small {
+    color: #64748b;
+    font-size: 0.8rem;
+}
+
+.threshold-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.threshold-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%);
+    border: 1px solid #a5f3fc;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.threshold-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2);
+    border-color: #22d3ee;
+}
+
+.threshold-card:focus-visible {
+    outline: 2px solid #0f766e;
+    outline-offset: 2px;
+}
+
+.threshold-card span {
+    font-size: 0.9rem;
+    color: #0369a1;
+    margin-bottom: 4px;
+}
+
+.threshold-card strong {
+    font-size: 1.4rem;
+    color: #0c4a6e;
+}
+
+/* "Add"-type cards (Supplies / Events / Availability / Add
+   Relief Camp) get a distinct look so they read as an action,
+   not a stat. */
+
+.threshold-card.is-add {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border: 1px dashed #34d399;
+}
+
+.threshold-card.is-add:hover {
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.22);
+}
+
+.threshold-card.is-add span {
+    color: #047857;
+}
+
+.threshold-card.is-add strong {
+    color: #065f46;
+}
+
+/* ============================================================
+   SUB-ROLE PANELS
+   Panels are hidden/shown by the role-select cards above via
+   the shared .hidden helper class (defined in common.css).
+   Give the visible panel a little breathing room from
+   whatever comes right before it.
+   ========================================================== */
+
+#subRolePanels {
+    margin: 20px 0;
+}
+
+.sub-role-panel {
+    scroll-margin-top: 20px;
+}
+
+/* ============================================================
+   FOOTER
+   ========================================================== */
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    color: #64748b;
+    font-size: 0.9rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ========================================================== */
+
+@media (max-width: 1200px) {
+    .command-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .command-layout {
+        gap: 16px;
+        margin: 16px 0;
+    }
+
+    .service-card,
+    .map-panel,
+    .threshold-section {
+        padding: 16px;
+    }
+
+    .panel-header {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .status-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quick-location-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .threshold-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-table {
+        font-size: 0.85rem;
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+        padding: 8px;
+    }
+
+    #communityMap {
+        min-height: 400px;
+    }
+
+    .incident-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .threshold-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .map-legend {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    #communityMap {
+        min-height: 320px;
+    }
+
+    .role-select-card {
+        min-height: 132px;
+    }
+
+    .features-grid,
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+.full-width-card{
+
+    width:100%;
+
+}
+
+.full-width-card #reportsContainer{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}

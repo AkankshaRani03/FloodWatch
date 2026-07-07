@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FloodWatch Government Portal</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/government.css') }}">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+<!-- =======================================================
+                        HEADER
+======================================================== -->
+
+<header class="topbar">
+
+    <a href="/"
+       class="brand-linkup">
+
+        <div class="brand-lockup">
+
+            <div class="brand-mark">
+
+                <i class="fa-solid fa-landmark"></i>
+
+            </div>
+
+            <div>
+
+                <p class="eyebrow">
+
+                    Government Emergency Operations Center
+
+                </p>
+
+                <h1>
+
+                    FloodWatch Government Portal
+
+                </h1>
+
+                <p class="subtitle">
+
+                    District Flood Monitoring • Response Coordination • Emergency Decision Support
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </a>
+
+    <div class="topbar-actions">
+
+        <a
+            href="/notifications"
+            class="notification-link">
+
+            <i class="fa-solid fa-bell"></i>
+
+            Alerts
+
+            <span
+                id="notificationBadge"
+                class="notification-badge">
+
+                0
+
+            </span>
+
+        </a>
+
+        <div class="user-chip">
+
+            <span class="avatar">
+
+                {{ user.username[0]|upper }}
+
+            </span>
+
+            <span>
+
+                <strong>
+
+                    {{ user.username }}
+
+                </strong>
+
+                <small>
+
+                    {{ user.sub_role.replace('_',' ').title() }}
+
+                </small>
+
+            </span>
+
+        </div>
+
+        <a
+            href="/logout"
+            class="logout-button">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</header>
+
+<!-- =======================================================
+                    GOVERNMENT DASHBOARD
+======================================================== -->
+
+<main
+id="dashboard"
+class="government-dashboard">
+
+<!-- =======================================================
+                    GOVERNMENT SUB ROLE CARDS
+======================================================== -->
+
+<section class="status-grid government-role-grid">
+
+    <div
+        class="status-tile government-role-card"
+        data-department="municipal"
+        role="button"
+        tabindex="0">
+
+        <i class="fa-solid fa-city fa-2x"></i>
+
+        <span class="status-label">Municipal Authority</span>
+
+        <strong>Civic Response</strong>
+
+        <small>Roads, drainage, utilities, maintenance teams</small>
+
+    </div>
+
+    <div
+        class="status-tile government-role-card warning"
+        data-department="disaster_management"
+        role="button"
+        tabindex="0">
+
+        <i class="fa-solid fa-house-flood-water fa-2x"></i>
+
+        <span class="status-label">Disaster Management</span>
+
+        <strong>Rescue Operations</strong>
+
+        <small>Rescue teams, shelters, evacuation, relief distribution</small>
+
+    </div>
+
+    <div
+        class="status-tile government-role-card"
+        data-department="police"
+        role="button"
+        tabindex="0">
+
+        <i class="fa-solid fa-shield-halved fa-2x"></i>
+
+        <span class="status-label">Police Department</span>
+
+        <strong>Safety Control</strong>
+
+        <small>Traffic diversions, patrols, restricted zones</small>
+
+    </div>
+
+    <div
+        class="status-tile government-role-card success"
+        data-department="revenue"
+        role="button"
+        tabindex="0">
+
+        <i class="fa-solid fa-file-invoice-dollar fa-2x"></i>
+
+        <span class="status-label">Revenue Department</span>
+
+        <strong>Damage Survey</strong>
+
+        <small>House damage, crop loss, compensation requests</small>
+
+    </div>
+
+</section>
+
+<!-- =======================================================
+        MAIN GOVERNMENT WORKSPACE STARTS HERE
+======================================================== -->
+
+<section class="government-main">
+    <!-- =======================================================
+        LEFT DEPARTMENT SIDEBAR
+======================================================== -->
+
+<aside class="department-sidebar">
+
+    <div class="service-card">
+
+        <div class="panel-header">
+
+            <p class="eyebrow">
+
+                Government Departments
+
+            </p>
+
+            <h2>
+
+                Operations
+
+            </h2>
+
+        </div>
+
+        <div class="department-menu">
+
+            <button
+                class="department-btn active"
+                data-department="municipal">
+
+                <i class="fa-solid fa-city"></i>
+
+                <span>
+
+                    Municipal Authority
+
+                </span>
+
+            </button>
+
+            <button
+                class="department-btn"
+                data-department="disaster_management">
+
+                <i class="fa-solid fa-house-flood-water"></i>
+
+                <span>
+
+                    Disaster Management
+
+                </span>
+
+            </button>
+
+            <button
+                class="department-btn"
+                data-department="police">
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                <span>
+
+                    Police Department
+
+                </span>
+
+            </button>
+
+            <button
+                class="department-btn"
+                data-department="revenue">
+
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+
+                <span>
+
+                    Revenue Department
+
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =======================================================
+                COMMON GOVERNMENT AREA
+======================================================== -->
+
+<section class="government-content">
+
+<!-- =======================================================
+            AI FLOOD PREDICTION + MAP
+======================================================== -->
+
+<section class="prediction-layout">
+
+    <section class="service-card operations-panel">
+
+        <div class="panel-header">
+
+            <p class="eyebrow">Risk Assessment</p>
+
+            <h2>Check Flood Risk</h2>
+
+        </div>
+
+        <div class="input-grid">
+
+            <div class="input-group">
+
+                <label>Latitude</label>
+
+                <input type="number" id="latitude" value="17.385" step="0.0001">
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Longitude</label>
+
+                <input type="number" id="longitude" value="78.4867" step="0.0001">
+
+            </div>
+
+        </div>
+
+        <button id="predictBtn" class="btn-primary">
+
+            <i class="fa-solid fa-magnifying-glass-location"></i>
+
+            Run Risk Assessment
+
+        </button>
+
+        <div class="quick-locations">
+
+            <p>Priority Locations</p>
+
+            <div class="quick-location-grid">
+
+                <button class="btn-secondary" onclick="selectLocation(17.385,78.4867,'Hyderabad')">Hyderabad</button>
+
+                <button class="btn-secondary" onclick="selectLocation(19.076,72.8777,'Mumbai')">Mumbai</button>
+
+                <button class="btn-secondary" onclick="selectLocation(13.0827,80.2707,'Chennai')">Chennai</button>
+
+                <button class="btn-secondary" onclick="selectLocation(28.7041,77.1025,'Delhi')">Delhi</button>
+
+            </div>
+
+        </div>
+
+        <div class="card loading-card hidden" id="loadingCard">
+
+            <div class="loading-spinner"></div>
+
+            <p>Running AI Prediction...</p>
+
+        </div>
+
+        <div class="card results-card hidden" id="resultsCard">
+
+            <div class="panel-header compact">
+
+                <h2>Prediction Result</h2>
+
+            </div>
+
+            <div class="risk-indicator">
+
+                <div id="riskPercentage" class="placeholder">--</div>
+
+                <div class="risk-gauge">
+
+                    <div id="gaugeFill" class="gauge-fill"></div>
+
+                </div>
+
+            </div>
+
+            <div class="risk-badge" id="riskBadge">
+
+                <span id="riskLevel">--</span>
+
+            </div>
+
+            <div class="features-grid">
+
+                <div class="feature-item">
+
+                    <div class="feature-label">Rainfall</div>
+
+                    <div id="rainfall" class="feature-value">--</div>
+
+                </div>
+
+                <div class="feature-item">
+
+                    <div class="feature-label">Soil Moisture</div>
+
+                    <div id="soilMoisture" class="feature-value">--</div>
+
+                </div>
+
+                <div class="feature-item">
+
+                    <div class="feature-label">Elevation</div>
+
+                    <div id="elevation" class="feature-value">--</div>
+
+                </div>
+
+                <div class="feature-item">
+
+                    <div class="feature-label">Slope</div>
+
+                    <div id="slope" class="feature-value">--</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="service-card map-card">
+
+        <div class="panel-header">
+
+            <div>
+
+                <p class="eyebrow">AI Flood Prediction</p>
+
+                <h2>Google Earth Engine Flood Intelligence</h2>
+
+            </div>
+
+            <div class="map-toolbar">
+
+                <button class="btn-secondary">Rainfall</button>
+
+                <button class="btn-secondary">Soil Moisture</button>
+
+                <button class="btn-secondary">Elevation</button>
+
+                <button class="btn-secondary">Prediction Layer</button>
+
+            </div>
+
+        </div>
+
+        <div id="governmentMap"></div>
+
+        <div class="map-footer">
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            <span>Click anywhere on the map to update coordinates, then run the flood prediction.</span>
+
+        </div>
+
+    </section>
+
+</section>
+<!-- =======================================================
+                    INCIDENT QUEUE
+======================================================== -->
+
+<section class="service-card">
+
+    <div class="panel-header">
+
+        <div>
+
+            <p class="eyebrow">
+
+                Live Incident Management
+
+            </p>
+
+            <h2>
+
+                District Incident Queue
+
+            </h2>
+
+        </div>
+
+        <span class="status-chip">
+
+            Live Updates
+
+        </span>
+
+    </div>
+
+    <div id="governmentIncidentContainer">
+
+        <!-- Dynamic incidents from government.js -->
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+        GOVERNMENT ALERTS
+======================================================== -->
+
+<section class="service-card">
+
+    <div class="panel-header">
+
+        <p class="eyebrow">
+
+            Government Notifications
+
+        </p>
+
+        <h2>
+
+            Recent Alerts
+
+        </h2>
+
+    </div>
+
+    <div
+        id="governmentAlerts"
+        class="alert-list">
+
+        <!-- Filled dynamically -->
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+        DISTRICT PERFORMANCE OVERVIEW
+======================================================== -->
+
+<section class="service-card">
+
+    <div class="panel-header">
+
+        <p class="eyebrow">
+
+            Operational Status
+
+        </p>
+
+        <h2>
+
+            District Performance Overview
+
+        </h2>
+
+    </div>
+
+    <div class="threshold-grid">
+
+        <div class="threshold-card">
+
+            <span>
+
+                Average Prediction Accuracy
+
+            </span>
+
+            <strong>
+
+                94.8%
+
+            </strong>
+
+        </div>
+
+        <div class="threshold-card">
+
+            <span>
+
+                Incidents Resolved Today
+
+            </span>
+
+            <strong>
+
+                26
+
+            </strong>
+
+        </div>
+
+        <div class="threshold-card">
+
+            <span>
+
+                Rescue Success Rate
+
+            </span>
+
+            <strong>
+
+                97%
+
+            </strong>
+
+        </div>
+
+        <div class="threshold-card">
+
+            <span>
+
+                Average Response Time
+
+            </span>
+
+            <strong>
+
+                14 min
+
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =======================================================
+            DEPARTMENT WORKSPACE
+======================================================== -->
+
+<section id="departmentWorkspace" class="service-card department-workspace hidden">
+
+    <div class="panel-header">
+
+        <div>
+
+            <p class="eyebrow">
+
+                Department Workspace
+
+            </p>
+
+            <h2>
+
+                Department Operations
+
+            </h2>
+
+        </div>
+
+        <span id="activeDepartmentName"
+              class="status-chip">
+
+            Municipal Authority
+
+        </span>
+
+    </div>
+
+<!-- =======================================================
+        MUNICIPAL AUTHORITY
+======================================================== -->
+
+<div id="municipalPanel"
+     class="department-panel">
+
+<div class="department-grid">
+
+<div class="threshold-card">
+<i class="fa-solid fa-road"></i>
+<span>Road Closures</span>
+<strong>12</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-water"></i>
+<span>Drainage Pumps</span>
+<strong>24</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-trash"></i>
+<span>Garbage Clearance</span>
+<strong>08</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-droplet"></i>
+<span>Waterlogged Roads</span>
+<strong>15</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-screwdriver-wrench"></i>
+<span>Maintenance Teams</span>
+<strong>19</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-lightbulb"></i>
+<span>Utility Services</span>
+<strong>Normal</strong>
+</div>
+
+</div>
+
+</div>
+
+<!-- =======================================================
+        DISASTER MANAGEMENT
+======================================================== -->
+
+<div id="disaster_managementPanel"
+     class="department-panel">
+
+<div class="department-grid">
+
+<div class="threshold-card">
+<i class="fa-solid fa-life-ring"></i>
+<span>Rescue Teams</span>
+<strong>18</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-ship"></i>
+<span>Rescue Boats</span>
+<strong>11</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-house"></i>
+<span>Relief Camps</span>
+<strong>09</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-truck-medical"></i>
+<span>Medical Teams</span>
+<strong>09</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-people-carry-box"></i>
+<span>Relief Distribution</span>
+<strong>Running</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-person-walking-arrow-right"></i>
+<span>Evacuated Citizens</span>
+<strong>2146</strong>
+</div>
+
+</div>
+
+</div>
+
+<!-- =======================================================
+            POLICE
+======================================================== -->
+
+<div id="policePanel"
+     class="department-panel">
+
+<div class="department-grid">
+
+<div class="threshold-card">
+<i class="fa-solid fa-route"></i>
+<span>Traffic Diversions</span>
+<strong>13</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-ban"></i>
+<span>Restricted Areas</span>
+<strong>05</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-car"></i>
+<span>Patrol Vehicles</span>
+<strong>24</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-user-shield"></i>
+<span>Police Personnel</span>
+<strong>81</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-users"></i>
+<span>Crowd Control</span>
+<strong>12</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-triangle-exclamation"></i>
+<span>Emergency Routes</span>
+<strong>Open</strong>
+</div>
+
+</div>
+
+</div>
+
+<!-- =======================================================
+            REVENUE
+======================================================== -->
+
+<div id="revenuePanel"
+     class="department-panel">
+
+<div class="department-grid">
+
+<div class="threshold-card">
+<i class="fa-solid fa-house-crack"></i>
+<span>House Damage Survey</span>
+<strong>86</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-seedling"></i>
+<span>Crop Damage</span>
+<strong>41</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-file-circle-check"></i>
+<span>Compensation Requests</span>
+<strong>26</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-people-group"></i>
+<span>Affected Families</span>
+<strong>318</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-map-location-dot"></i>
+<span>Village Reports</span>
+<strong>21</strong>
+</div>
+
+<div class="threshold-card">
+<i class="fa-solid fa-chart-line"></i>
+<span>Survey Progress</span>
+<strong>78%</strong>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</section>
+
+</main>
+
+<!-- =======================================================
+                    FOOTER
+======================================================== -->
+
+<footer class="footer">
+
+<p>
+
+FloodWatch Government Emergency Operations Center |
+District Flood Monitoring & Response Coordination
+
+</p>
+
+</footer>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="{{ url_for('static',
+filename='js/common.js') }}"></script>
+
+<script src="{{ url_for('static',
+filename='js/government.js') }}"></script>
+
+<!-- =======================================================
+                    SHARED CARD MODAL
+======================================================== -->
+
+<div class="modal-overlay" id="cardModalOverlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h3 id="modalTitle">Details</h3>
+
+            <button class="modal-close" id="modalCloseBtn" aria-label="Close">&times;</button>
+
+        </div>
+
+        <div class="modal-body" id="modalBody"></div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

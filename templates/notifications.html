@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts - FloodWatch Command Center</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            background:
+                linear-gradient(180deg, rgba(11, 31, 51, 0.96), rgba(11, 31, 51, 0.88) 260px, #edf2f7 261px),
+                #edf2f7;
+        }
+
+        .alerts-shell {
+            width: min(1300px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 26px 0;
+        }
+
+        .alerts-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            color: white;
+            padding-bottom: 30px;
+        }
+
+        .alerts-header h1 {
+            margin-top: 8px;
+            font-size: clamp(2.2rem, 5vw, 4.2rem);
+            line-height: 0.98;
+        }
+
+        .alerts-header p {
+            max-width: 720px;
+            margin-top: 10px;
+            color: #cbd5e1;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .back-button,
+        .clear-btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 900;
+        }
+
+        .back-button {
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .clear-btn {
+            border: 0;
+            color: white;
+            background: #dc2626;
+            cursor: pointer;
+        }
+
+        .notification-alert,
+        .no-notifications {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: white;
+            box-shadow: var(--shadow);
+        }
+
+        .notification-alert {
+            margin-bottom: 16px;
+            overflow: hidden;
+            border-top: 5px solid var(--blue);
+        }
+
+        .notification-alert.high {
+            border-top-color: var(--red);
+        }
+
+        .notification-alert.medium {
+            border-top-color: var(--amber);
+        }
+
+        .notification-alert.low {
+            border-top-color: var(--green);
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .notification-title h2 {
+            font-size: 1.35rem;
+        }
+
+        .notification-title p {
+            margin-top: 6px;
+            color: var(--muted);
+        }
+
+        .notification-badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 8px 13px;
+            border-radius: 999px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .notification-badge.high {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .notification-badge.medium {
+            color: #92400e;
+            background: #fef3c7;
+        }
+
+        .notification-badge.low {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .probability-meter {
+            padding: 20px 22px 0;
+        }
+
+        .probability-bar {
+            height: 16px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+
+        .probability-fill {
+            height: 100%;
+            color: transparent;
+        }
+
+        .probability-fill.high {
+            background: var(--red);
+        }
+
+        .probability-fill.medium {
+            background: var(--amber);
+        }
+
+        .probability-fill.low {
+            background: var(--green);
+        }
+
+        .notification-body {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 16px;
+            padding: 22px;
+        }
+
+        .notification-section {
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .notification-section h3 {
+            margin-bottom: 14px;
+            font-size: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-item:last-child {
+            border-bottom: 0;
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-weight: 800;
+        }
+
+        .detail-value {
+            font-weight: 900;
+            text-align: right;
+        }
+
+        .feature-box {
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: white;
+        }
+
+        .feature-box-label {
+            color: var(--muted);
+            font-size: 0.74rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .feature-box-value {
+            margin-top: 6px;
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        .recommendations {
+            grid-column: 1 / -1;
+        }
+
+        .recommendations ul {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px 18px;
+            margin-left: 18px;
+            color: #334155;
+        }
+
+        .no-notifications {
+            padding: 58px 24px;
+            text-align: center;
+        }
+
+        .no-notifications h2 {
+            font-size: 1.8rem;
+        }
+
+        .no-notifications p {
+            margin-top: 10px;
+            color: var(--muted);
+        }
+
+        .no-notifications a {
+            color: var(--blue);
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .dismiss-row {
+            padding: 0 22px 22px;
+            text-align: right;
+        }
+
+        @media (max-width: 840px) {
+            .alerts-header,
+            .notification-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .notification-body,
+            .recommendations ul {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="alerts-shell">
+        <header class="alerts-header">
+            <div>
+                <p class="eyebrow">FloodWatch Command Center</p>
+                <h1>Alerts & Notifications</h1>
+                <p>Logged medium and high probability flood assessments for operational follow-up.</p>
+            </div>
+            <div class="alert-actions">
+                <a href="/" class="back-button">Back to Map</a>
+                <button class="clear-btn" onclick="clearAllNotifications()">Clear All</button>
+            </div>
+        </header>
+
+        <div id="notificationsList"></div>
+
+        <div class="no-notifications" id="noNotifications">
+            <h2>No Active Alerts</h2>
+            <p>Alerts will appear here after a location crosses the configured risk threshold.</p>
+            <p><a href="/">Return to assessment map</a></p>
+        </div>
+    </div>
+
+    <script>
+        function loadNotifications() {
+            const notifications = JSON.parse(localStorage.getItem('floodNotifications') || '[]');
+            const container = document.getElementById('notificationsList');
+            const noNotifications = document.getElementById('noNotifications');
+
+            if (notifications.length === 0) {
+                container.innerHTML = '';
+                noNotifications.style.display = 'block';
+                return;
+            }
+
+            noNotifications.style.display = 'none';
+            notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            container.innerHTML = notifications.map((notif, index) => {
+                const riskClass = notif.risk_level.toLowerCase();
+                const probability = (notif.flood_probability * 100).toFixed(1);
+                const date = new Date(notif.timestamp);
+                const formattedDate = date.toLocaleString();
+
+                return `
+                    <div class="notification-alert ${riskClass}">
+                        <div class="notification-header">
+                            <div class="notification-title">
+                                <h2>${notif.risk_level} Risk Alert</h2>
+                                <p>Location: ${notif.location.lat.toFixed(4)}, ${notif.location.lon.toFixed(4)} | ${formattedDate}</p>
+                            </div>
+                            <span class="notification-badge ${riskClass}">${probability}% probability</span>
+                        </div>
+
+                        <div class="probability-meter">
+                            <div class="probability-bar">
+                                <div class="probability-fill ${riskClass}" style="width: ${probability}%;">${probability}%</div>
+                            </div>
+                        </div>
+
+                        <div class="notification-body">
+                            <div class="notification-section">
+                                <h3>Environmental Conditions</h3>
+                                <div class="features-grid">
+                                    <div class="feature-box">
+                                        <div class="feature-box-label">Rainfall 7-day</div>
+                                        <div class="feature-box-value">${notif.features.rainfall_7d_mm.toFixed(1)} mm</div>
+                                    </div>
+                                    <div class="feature-box">
+                                        <div class="feature-box-label">Soil Moisture</div>
+                                        <div class="feature-box-value">${notif.features.soil_moisture.toFixed(3)}</div>
+                                    </div>
+                                    <div class="feature-box">
+                                        <div class="feature-box-label">Elevation</div>
+                                        <div class="feature-box-value">${notif.features.elevation_m.toFixed(1)} m</div>
+                                    </div>
+                                    <div class="feature-box">
+                                        <div class="feature-box-label">Slope</div>
+                                        <div class="feature-box-value">${notif.features.slope_deg.toFixed(1)} deg</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="notification-section">
+                                <h3>Location Details</h3>
+                                <div class="detail-item"><span class="detail-label">Latitude</span><span class="detail-value">${notif.location.lat.toFixed(6)}</span></div>
+                                <div class="detail-item"><span class="detail-label">Longitude</span><span class="detail-value">${notif.location.lon.toFixed(6)}</span></div>
+                                <div class="detail-item"><span class="detail-label">Risk Level</span><span class="detail-value">${notif.risk_level}</span></div>
+                                <div class="detail-item"><span class="detail-label">Data Source</span><span class="detail-value">${notif.data_source || 'GEE Historical'}</span></div>
+                            </div>
+
+                            <div class="notification-section recommendations">
+                                <h3>Recommended Actions</h3>
+                                <ul>
+                                    <li>Monitor official weather and flood advisories.</li>
+                                    <li>Notify local response coordinators for verification.</li>
+                                    <li>Prepare emergency supplies and key documents.</li>
+                                    <li>Avoid low-lying routes and waterlogged corridors.</li>
+                                    <li>Keep phone lines and contact lists available.</li>
+                                    ${riskClass === 'high' ? '<li><strong>Escalate for evacuation readiness where local authorities advise.</strong></li>' : ''}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="dismiss-row">
+                            <button class="clear-btn" onclick="removeNotification(${index})">Dismiss</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function removeNotification(index) {
+            const notifications = JSON.parse(localStorage.getItem('floodNotifications') || '[]');
+            notifications.splice(index, 1);
+            localStorage.setItem('floodNotifications', JSON.stringify(notifications));
+            loadNotifications();
+        }
+
+        function clearAllNotifications() {
+            if (confirm('Clear all notifications?')) {
+                localStorage.removeItem('floodNotifications');
+                loadNotifications();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadNotifications);
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'floodNotifications') loadNotifications();
+        });
+    </script>
+</body>
+</html>

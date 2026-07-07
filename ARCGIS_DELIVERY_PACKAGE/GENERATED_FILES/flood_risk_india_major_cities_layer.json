@@ -1,0 +1,108 @@
+{
+  "name": "Flood Risk Predictions",
+  "type": "Feature Layer",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {
+    "wkid": 4326
+  },
+  "fields": [
+    {
+      "name": "location",
+      "type": "esriFieldTypeString",
+      "alias": "Location"
+    },
+    {
+      "name": "latitude",
+      "type": "esriFieldTypeDouble",
+      "alias": "Latitude"
+    },
+    {
+      "name": "longitude",
+      "type": "esriFieldTypeDouble",
+      "alias": "Longitude"
+    },
+    {
+      "name": "flood_prob",
+      "type": "esriFieldTypeDouble",
+      "alias": "Flood Probability"
+    },
+    {
+      "name": "risk_level",
+      "type": "esriFieldTypeString",
+      "alias": "Risk Level"
+    },
+    {
+      "name": "rainfall",
+      "type": "esriFieldTypeDouble",
+      "alias": "Rainfall (mm)"
+    },
+    {
+      "name": "soil_moist",
+      "type": "esriFieldTypeDouble",
+      "alias": "Soil Moisture"
+    },
+    {
+      "name": "elevation",
+      "type": "esriFieldTypeDouble",
+      "alias": "Elevation (m)"
+    },
+    {
+      "name": "slope",
+      "type": "esriFieldTypeDouble",
+      "alias": "Slope (deg)"
+    }
+  ],
+  "drawingInfo": {
+    "renderer": {
+      "type": "uniqueValue",
+      "field1": "risk_level",
+      "uniqueValueInfos": [
+        {
+          "value": "LOW",
+          "symbol": {
+            "type": "esriSMS",
+            "style": "esriSMSCircle",
+            "color": [
+              74,
+              222,
+              128,
+              255
+            ],
+            "size": 8
+          },
+          "label": "Low Risk"
+        },
+        {
+          "value": "MEDIUM",
+          "symbol": {
+            "type": "esriSMS",
+            "style": "esriSMSCircle",
+            "color": [
+              251,
+              191,
+              36,
+              255
+            ],
+            "size": 8
+          },
+          "label": "Medium Risk"
+        },
+        {
+          "value": "HIGH",
+          "symbol": {
+            "type": "esriSMS",
+            "style": "esriSMSCircle",
+            "color": [
+              239,
+              68,
+              68,
+              255
+            ],
+            "size": 8
+          },
+          "label": "High Risk"
+        }
+      ]
+    }
+  }
+}

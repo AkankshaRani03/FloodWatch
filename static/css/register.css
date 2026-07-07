@@ -1,0 +1,609 @@
+/* ==========================================================
+   FloodWatch Register Page
+   ========================================================== */
+
+:root {
+
+    --ink:#111827;
+    --muted:#64748b;
+    --line:#d9e2ec;
+
+    --navy:#0b1f33;
+    --blue:#1d4ed8;
+    --teal:#0f766e;
+
+    --red:#dc2626;
+    --green:#16a34a;
+    --amber:#d97706;
+
+}
+
+/* ========================================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+body{
+
+    min-height:100vh;
+
+    padding:28px;
+
+    font-family:Inter,"Segoe UI",Arial,sans-serif;
+
+    color:var(--ink);
+
+    background:
+
+    linear-gradient(
+        135deg,
+        rgba(11,31,51,.96),
+        rgba(15,118,110,.86)
+    ),
+
+    #0b1f33;
+
+}
+
+/* ========================================================== */
+/* Main Layout */
+/* ========================================================== */
+
+.auth-shell{
+
+    width:min(1180px,100%);
+
+    margin:auto;
+
+    display:grid;
+
+    grid-template-columns:420px minmax(0,1fr);
+
+    overflow:hidden;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.16);
+
+    background:#fff;
+
+    box-shadow:0 30px 80px rgba(0,0,0,.28);
+
+}
+
+/* ========================================================== */
+/* Left Panel */
+/* ========================================================== */
+
+.brand-panel{
+
+    padding:42px;
+
+    color:#fff;
+
+    background:
+
+    linear-gradient(
+        180deg,
+        rgba(11,31,51,.22),
+        rgba(11,31,51,.82)
+    ),
+
+    radial-gradient(
+
+        circle at 20% 16%,
+
+        rgba(45,212,191,.24),
+
+        transparent 32%
+
+    ),
+
+    #0b1f33;
+
+}
+
+.brand-mark{
+
+    width:58px;
+
+    height:58px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:8px;
+
+    border:1px solid rgba(255,255,255,.20);
+
+    background:
+
+    linear-gradient(
+
+        135deg,
+
+        var(--teal),
+
+        var(--blue)
+
+    );
+
+    font-weight:900;
+
+}
+
+.eyebrow{
+
+    color:#0f766e;
+
+    font-size:.78rem;
+
+    font-weight:900;
+
+    letter-spacing:.12em;
+
+    text-transform:uppercase;
+
+}
+
+.brand-panel .eyebrow{
+
+    margin-top:90px;
+
+    color:#8bd9d1;
+
+}
+
+.brand-panel h1{
+
+    margin-top:12px;
+
+    font-size:clamp(2.4rem,4.8vw,4.4rem);
+
+    line-height:.98;
+
+}
+
+.brand-panel p:not(.eyebrow){
+
+    margin-top:18px;
+
+    color:#cbd5e1;
+
+    line-height:1.7;
+
+}
+
+/* ========================================================== */
+/* Role Cards */
+/* ========================================================== */
+
+.role-list{
+
+    display:grid;
+
+    gap:12px;
+
+    margin-top:42px;
+
+}
+
+.role-list span{
+
+    padding:14px;
+
+    border-radius:8px;
+
+    border:1px solid rgba(255,255,255,.18);
+
+    background:rgba(255,255,255,.08);
+
+    color:#e2e8f0;
+
+    font-weight:800;
+
+}
+
+/* ========================================================== */
+/* Right Panel */
+/* ========================================================== */
+
+.auth-panel{
+
+    padding:38px 42px;
+
+}
+
+.auth-header{
+
+    margin-bottom:24px;
+
+}
+
+.auth-header h2{
+
+    margin-top:8px;
+
+    font-size:2rem;
+
+}
+
+.auth-header p{
+
+    margin-top:8px;
+
+    color:var(--muted);
+
+}
+/* ==========================================================
+   Registration Form
+   ========================================================== */
+
+.form-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+
+    gap:16px;
+
+}
+
+.form-group.full{
+
+    grid-column:1/-1;
+
+}
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:7px;
+
+    color:#334155;
+
+    font-size:.88rem;
+
+    font-weight:900;
+
+}
+
+.form-group input,
+.form-group select{
+
+    width:100%;
+
+    min-height:50px;
+
+    padding:12px 14px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:8px;
+
+    background:#fff;
+
+    color:var(--ink);
+
+    font:inherit;
+
+    transition:.25s;
+
+}
+
+.form-group input:focus,
+.form-group select:focus{
+
+    outline:none;
+
+    border-color:var(--blue);
+
+    box-shadow:0 0 0 4px rgba(29,78,216,.12);
+
+}
+
+.form-group input.error-input{
+
+    border-color:var(--red);
+
+}
+
+/* ==========================================================
+   Validation Messages
+   ========================================================== */
+
+.field-error{
+
+    display:none;
+
+    margin-top:6px;
+
+    color:#991b1b;
+
+    font-size:.80rem;
+
+}
+
+.field-error.show{
+
+    display:block;
+
+}
+
+/* ==========================================================
+   Password Strength
+   ========================================================== */
+
+.strength-bar{
+
+    height:5px;
+
+    margin-top:8px;
+
+    overflow:hidden;
+
+    border-radius:999px;
+
+    background:#e2e8f0;
+
+}
+
+.strength-bar-fill{
+
+    width:0;
+
+    height:100%;
+
+    transition:.25s;
+
+}
+
+.strength-weak{
+
+    width:33%;
+
+    background:var(--red);
+
+}
+
+.strength-medium{
+
+    width:66%;
+
+    background:var(--amber);
+
+}
+
+.strength-strong{
+
+    width:100%;
+
+    background:var(--green);
+
+}
+
+/* ==========================================================
+   Register Button
+   ========================================================== */
+
+.btn-primary{
+
+    width:100%;
+
+    min-height:52px;
+
+    margin-top:22px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:
+
+    linear-gradient(
+
+        135deg,
+
+        var(--blue),
+
+        var(--teal)
+
+    );
+
+    color:#fff;
+
+    font:inherit;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.btn-primary:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 12px 25px rgba(29,78,216,.25);
+
+}
+
+.btn-primary:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.70;
+
+}
+
+/* ==========================================================
+   Messages
+   ========================================================== */
+
+.error-message,
+.success-message{
+
+    display:none;
+
+    margin-bottom:16px;
+
+    padding:12px 14px;
+
+    border-radius:8px;
+
+    font-size:.92rem;
+
+}
+
+.error-message{
+
+    color:#991b1b;
+
+    border:1px solid #fecaca;
+
+    background:#fef2f2;
+
+}
+
+.success-message{
+
+    color:#166534;
+
+    border:1px solid #bbf7d0;
+
+    background:#f0fdf4;
+
+}
+
+.error-message.show,
+.success-message.show{
+
+    display:block;
+
+}
+
+/* ==========================================================
+   Loading Spinner
+   ========================================================== */
+
+.loading-spinner{
+
+    display:none;
+
+    width:28px;
+
+    height:28px;
+
+    margin:0 auto 16px;
+
+    border:3px solid #dbeafe;
+
+    border-top-color:var(--blue);
+
+    border-radius:50%;
+
+    animation:spin .9s linear infinite;
+
+}
+
+.loading-spinner.show{
+
+    display:block;
+
+}
+
+@keyframes spin{
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+/* ==========================================================
+   Footer
+   ========================================================== */
+
+.auth-footer{
+
+    margin-top:24px;
+
+    padding-top:22px;
+
+    border-top:1px solid var(--line);
+
+    color:var(--muted);
+
+    text-align:center;
+
+}
+
+.auth-footer a{
+
+    color:var(--blue);
+
+    font-weight:900;
+
+    text-decoration:none;
+
+}
+
+.auth-footer a:hover{
+
+    text-decoration:underline;
+
+}
+
+/* ==========================================================
+   Responsive
+   ========================================================== */
+
+@media(max-width:980px){
+
+body{
+
+padding:14px;
+
+}
+
+.auth-shell{
+
+grid-template-columns:1fr;
+
+}
+
+.brand-panel,
+.auth-panel{
+
+padding:30px;
+
+}
+
+.brand-panel .eyebrow{
+
+margin-top:42px;
+
+}
+
+}
+
+@media(max-width:640px){
+
+.form-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}

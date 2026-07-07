@@ -1,0 +1,4 @@
+location,latitude,longitude,flood_prob,risk_level,rainfall,soil_moist,elevation,slope
+Hyderabad,17.385,78.4867,0.026,LOW,0.92,0.2049,523.64,3.07
+Mumbai,19.076,72.8777,0.977,HIGH,0.01,0.1152,14.74,3.15
+Chennai,13.0827,80.2707,0.968,HIGH,36.01,0.4041,6.4,1.56
