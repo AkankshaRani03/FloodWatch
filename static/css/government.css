@@ -184,6 +184,50 @@
 
 }
 
+.department-mobile-select{
+
+    display:none;
+
+}
+
+.department-mobile-select label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    color:#475569;
+
+    font-size:.82rem;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    letter-spacing:.05em;
+
+}
+
+.department-mobile-select select{
+
+    width:100%;
+
+    min-height:48px;
+
+    padding:12px 14px;
+
+    border:1px solid #dbe4ef;
+
+    border-radius:10px;
+
+    color:#0f172a;
+
+    background:#ffffff;
+
+    font:inherit;
+
+}
+
 /* ==========================================================
    Main Workspace
 ========================================================== */
@@ -1328,6 +1372,18 @@ grid-template-columns:repeat(2,1fr);
 
 }
 
+.government-role-grid{
+
+display:none;
+
+}
+
+.department-mobile-select{
+
+display:block;
+
+}
+
 .department-menu{
 
 grid-template-columns:1fr;
@@ -1409,12 +1465,6 @@ gap:12px;
 @media(max-width:576px){
 
 .status-grid{
-
-grid-template-columns:1fr;
-
-}
-
-.government-role-grid{
 
 grid-template-columns:1fr;
 

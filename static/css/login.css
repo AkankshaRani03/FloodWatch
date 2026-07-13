@@ -534,15 +534,49 @@ padding:30px;
 
 @media(max-width:600px){
 
-.auth-header h2{
+body{
 
-font-size:1.7rem;
+padding:0;
+
+place-items:stretch;
+
+background:#f4f7fb;
 
 }
 
-.brand-panel h1{
+.auth-shell{
 
-font-size:2.5rem;
+min-height:100vh;
+
+border:none;
+
+border-radius:0;
+
+box-shadow:none;
+
+}
+
+.brand-panel{
+
+display:none;
+
+}
+
+.auth-panel{
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+padding:24px 18px;
+
+}
+
+.auth-header h2{
+
+font-size:1.7rem;
 
 }
 

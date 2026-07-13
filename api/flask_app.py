@@ -4,7 +4,7 @@ Provides REST endpoint for flood probability prediction
 """
 
 from ee import data
-from flask import Flask, request, jsonify, render_template, session, redirect, url_for
+from flask import Flask, request, jsonify, render_template, session, redirect, url_for, send_from_directory
 from flask_cors import CORS
 from functools import wraps
 import sys
@@ -51,17 +51,27 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Secret key for session management (CHANGE THIS IN PRODUCTION!)
-app.secret_key = 'flood-prediction-secret-key-change-in-production-2026'
+# Secret key for session management.
+# In production, set SECRET_KEY in the server environment.
+app.secret_key = os.environ.get(
+    'SECRET_KEY',
+    'flood-prediction-dev-secret-change-in-production'
+)
 
 # Session configuration for better cookie handling
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
-# CORS configuration with explicit origin
-CORS(app, 
+# CORS configuration. For public deployment, set CORS_ORIGINS to the
+# production HTTPS URL, for example: https://floodwatch.gov.example
+cors_origins = os.environ.get(
+    'CORS_ORIGINS',
+    'http://localhost:5000,http://127.0.0.1:5000'
+).split(',')
+
+CORS(app,
      supports_credentials=True,
-     origins=['http://localhost:5000', 'http://127.0.0.1:5000'],
+     origins=[origin.strip() for origin in cors_origins if origin.strip()],
      allow_headers=['Content-Type'],
      methods=['GET', 'POST', 'OPTIONS'])
 
@@ -105,7 +115,7 @@ def initialize_app():
     print("✓ Database initialized")
     
     # Initialize GEE with project
-    gee_project = 'flood-prediction-0325'  # Your GEE Cloud Project
+    gee_project = os.environ.get('GEE_PROJECT', getattr(config, 'GEE_PROJECT', 'flood-prediction-0325'))
     gee_initialized = initialize_gee(project=gee_project)
     
     # Load ML model
@@ -152,6 +162,24 @@ def home():
     
     # If user is NOT logged in, show public landing page
     return render_template('index.html')
+
+
+@app.route('/manifest.json')
+def manifest():
+    """Serve PWA manifest from the app root."""
+    return send_from_directory(app.static_folder, 'manifest.json')
+
+
+@app.route('/service-worker.js')
+def service_worker():
+    """Serve service worker from the app root so it can control the whole app."""
+    return send_from_directory(app.static_folder, 'service-worker.js', mimetype='application/javascript')
+
+
+@app.route('/offline.html')
+def offline_page():
+    """Offline fallback page used by the service worker."""
+    return send_from_directory(app.static_folder, 'offline.html')
 
 @app.route('/notifications', methods=['GET'])
 @login_required
@@ -710,4 +738,8 @@ def notifications_mark_read():
 if __name__ == '__main__':
     print("\n🚀 Starting Flood Prediction API...")
     initialize_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(
+        debug=os.environ.get('FLASK_DEBUG', str(getattr(config, 'DEBUG_MODE', False))).lower() == 'true',
+        host=os.environ.get('HOST', getattr(config, 'API_HOST', '0.0.0.0')),
+        port=int(os.environ.get('PORT', getattr(config, 'API_PORT', 5000)))
+    )

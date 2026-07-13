@@ -1,0 +1,20 @@
+{
+  "name": "FloodWatch Command Center",
+  "short_name": "FloodWatch",
+  "description": "AI-driven flood prediction, alerts, incident reporting, and response coordination.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f7fb",
+  "theme_color": "#0b5ed7",
+  "categories": ["productivity", "utilities", "weather"],
+  "icons": [
+    {
+      "src": "/static/icons/floodwatch-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

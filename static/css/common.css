@@ -924,6 +924,15 @@ body{
 
 
 /* ==========================================================
+   MOBILE APP NAVIGATION
+   ========================================================== */
+
+.mobile-bottom-nav{
+    display:none;
+}
+
+
+/* ==========================================================
    RESPONSIVE
    ========================================================== */
  
@@ -960,6 +969,88 @@ grid-template-columns:repeat(2,1fr);
 }
  
 @media(max-width:900px){
+
+body{
+
+padding-bottom:74px;
+
+}
+
+.mobile-bottom-nav{
+
+position:fixed;
+
+left:0;
+
+right:0;
+
+bottom:0;
+
+z-index:950;
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:4px;
+
+padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+
+border-top:1px solid var(--border);
+
+background:rgba(255,255,255,.96);
+
+box-shadow:0 -10px 30px rgba(15,23,42,.12);
+
+backdrop-filter:blur(12px);
+
+}
+
+.mobile-nav-item{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+gap:3px;
+
+min-height:50px;
+
+border-radius:12px;
+
+color:var(--muted);
+
+text-decoration:none;
+
+font-size:.72rem;
+
+font-weight:800;
+
+}
+
+.mobile-nav-item i{
+
+font-size:1rem;
+
+}
+
+.mobile-nav-item.active{
+
+color:var(--primary);
+
+background:#eef4ff;
+
+}
+
+.mobile-nav-danger{
+
+color:var(--danger);
+
+}
  
 .app-shell{
  

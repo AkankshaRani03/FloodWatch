@@ -7,6 +7,12 @@
 
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b5ed7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FloodWatch">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-icon.svg') }}" type="image/svg+xml">
 
 <title>
 FloodWatch Community Command Center
@@ -945,6 +951,7 @@ FloodWatch Community Command Center
 <script src="{{ url_for('static', filename='js/common.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/community.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
 
 </body>
 

@@ -23,6 +23,8 @@ function initializeGovernmentDashboard() {
 
     initializeGovernmentRoleCards();
 
+    initializeGovernmentDepartmentSelect();
+
     initializeDepartmentNavigation();
 
     initializeDepartmentTaskCards();
@@ -508,6 +510,29 @@ function initializeGovernmentRoleCards() {
 }
 
 
+function initializeGovernmentDepartmentSelect() {
+
+    const select = document.getElementById("departmentSelect");
+
+    if (!select) return;
+
+    select.addEventListener("change", () => {
+
+        if (!select.value) return;
+
+        showDepartment(
+
+            select.value,
+
+            { scroll: true }
+
+        );
+
+    });
+
+}
+
+
 // ==========================================================
 // Department Navigation
 // ==========================================================
@@ -606,6 +631,14 @@ function showDepartment(department, options = {}) {
         );
 
     });
+
+    const departmentSelect = document.getElementById("departmentSelect");
+
+    if (departmentSelect) {
+
+        departmentSelect.value = department;
+
+    }
 
     const activeLabel = document.querySelector(
 

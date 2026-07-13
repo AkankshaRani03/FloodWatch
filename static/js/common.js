@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeLogout();
  
     initializeModal();
+
+    initializeMobileNavigation();
  
 });
  
@@ -453,4 +455,79 @@ function scrollToTop() {
  
     });
  
+}
+
+
+// ============================================================
+// Mobile Bottom Navigation
+// Injected only on authenticated dashboard pages.
+// ============================================================
+
+function initializeMobileNavigation(){
+
+    const logout=document.querySelector('.logout-button[href="/logout"]');
+
+    if(!logout || document.getElementById("mobileBottomNav")) return;
+
+    const nav=document.createElement("nav");
+
+    nav.id="mobileBottomNav";
+
+    nav.className="mobile-bottom-nav";
+
+    nav.innerHTML=`
+        <a href="/" class="mobile-nav-item" data-path="/">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="/citizen" class="mobile-nav-item" data-path="/citizen">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Risk</span>
+        </a>
+        <a href="/notifications" class="mobile-nav-item" data-path="/notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span>Alerts</span>
+        </a>
+        <a href="/logout" class="mobile-nav-item mobile-nav-danger">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+    `;
+
+    document.body.appendChild(nav);
+
+    const mobileLogout=nav.querySelector(".mobile-nav-danger");
+
+    if(mobileLogout){
+
+        mobileLogout.addEventListener("click",function(e){
+
+            const confirmLogout=confirm(
+
+                "Are you sure you want to logout?"
+
+            );
+
+            if(!confirmLogout){
+
+                e.preventDefault();
+
+            }
+
+        });
+
+    }
+
+    const current=window.location.pathname;
+
+    nav.querySelectorAll(".mobile-nav-item").forEach(item=>{
+
+        if(item.dataset.path && item.dataset.path===current){
+
+            item.classList.add("active");
+
+        }
+
+    });
+
 }

@@ -600,9 +600,54 @@ margin-top:42px;
 
 @media(max-width:640px){
 
+body{
+
+padding:0;
+
+background:#f4f7fb;
+
+}
+
+.auth-shell{
+
+min-height:100vh;
+
+border:none;
+
+border-radius:0;
+
+box-shadow:none;
+
+}
+
+.brand-panel{
+
+display:none;
+
+}
+
+.auth-panel{
+
+padding:24px 18px;
+
+}
+
+.auth-header h2{
+
+font-size:1.7rem;
+
+}
+
 .form-grid{
 
 grid-template-columns:1fr;
+
+}
+
+.form-group input,
+.form-group select{
+
+min-height:48px;
 
 }
 

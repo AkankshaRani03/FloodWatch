@@ -337,3 +337,42 @@
     }
  
 }
+
+@media(max-width:600px){
+
+    .hero,
+    .portals-section,
+    .map-preview-section,
+    .activity-section{
+
+        padding:18px;
+
+        margin-bottom:18px;
+
+    }
+
+    .hero-copy h2{
+
+        font-size:1.5rem;
+
+    }
+
+    .hero-stats{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .portal-card{
+
+        padding:18px;
+
+    }
+
+    #map{
+
+        height:320px;
+
+    }
+
+}

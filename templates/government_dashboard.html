@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b5ed7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="FloodWatch">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-icon.svg') }}" type="image/svg+xml">
 
     <title>FloodWatch Government Portal</title>
 
@@ -199,6 +205,26 @@ class="government-dashboard">
         <small>House damage, crop loss, compensation requests</small>
 
     </div>
+
+</section>
+
+<section class="service-card department-mobile-select">
+
+    <label for="departmentSelect">Select Department</label>
+
+    <select id="departmentSelect">
+
+        <option value="">Choose a department</option>
+
+        <option value="municipal">Municipal Authority</option>
+
+        <option value="disaster_management">Disaster Management</option>
+
+        <option value="police">Police Department</option>
+
+        <option value="revenue">Revenue Department</option>
+
+    </select>
 
 </section>
 
@@ -901,6 +927,7 @@ filename='js/common.js') }}"></script>
 
 <script src="{{ url_for('static',
 filename='js/government.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
 
 <!-- =======================================================
                     SHARED CARD MODAL

@@ -3,6 +3,7 @@ Configuration File
 Project settings and constants
 """
 
+import os
 from pathlib import Path
 
 # Project Root
@@ -29,7 +30,7 @@ FEATURE_COLUMNS = [
 TARGET_COLUMN = 'flood_label'
 
 # GEE Configuration
-GEE_PROJECT = 'flood-prediction-0325'  # Your GEE Cloud Project
+GEE_PROJECT = os.environ.get('GEE_PROJECT', 'flood-prediction-0325')  # Your GEE Cloud Project
 GEE_BUFFER_METERS = 10000  # 10 km buffer around point
 GEE_SAFE_DAYS_BACK = 30     # Use data from 30 days ago
 GEE_WINDOW_DAYS = 7         # 7-day window for rainfall
@@ -51,9 +52,9 @@ TEST_SIZE = 0.2
 RANDOM_STATE = 42
 
 # API Configuration
-API_HOST = '0.0.0.0'
-API_PORT = 5000
-DEBUG_MODE = True
+API_HOST = os.environ.get('HOST', '0.0.0.0')
+API_PORT = int(os.environ.get('PORT', 5000))
+DEBUG_MODE = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
 
 # Risk Level Thresholds
 RISK_THRESHOLDS = {
@@ -63,18 +64,18 @@ RISK_THRESHOLDS = {
 }
 
 # Email Notification Configuration
-EMAIL_NOTIFICATIONS_ENABLED = True  # Set to False to disable email notifications
-EMAIL_ALERT_THRESHOLD = 0.5  # Send email if flood probability >= 50%
+EMAIL_NOTIFICATIONS_ENABLED = os.environ.get('EMAIL_NOTIFICATIONS_ENABLED', 'true').lower() == 'true'
+EMAIL_ALERT_THRESHOLD = float(os.environ.get('EMAIL_ALERT_THRESHOLD', 0.5))
 
 # SMTP Configuration (Gmail example)
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
-SMTP_USERNAME = 'taryareddy123@gmail.com'  # Your email address (e.g., 'your_email@gmail.com')
-SMTP_PASSWORD = 'pwey umjm cmsm gdzw'  # Your email password or app password
-SMTP_FROM_EMAIL = 'taryareddy123@gmail.com'  # Sender email (usually same as SMTP_USERNAME)
-SMTP_FROM_NAME = 'Flood Prediction System'
+SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
+SMTP_USERNAME = os.environ.get('SMTP_USERNAME', '')
+SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
+SMTP_FROM_EMAIL = os.environ.get('SMTP_FROM_EMAIL', SMTP_USERNAME)
+SMTP_FROM_NAME = os.environ.get('SMTP_FROM_NAME', 'Flood Prediction System')
 
 # Default recipient email (can be overridden by user settings)
-DEFAULT_ALERT_EMAIL = 'akashreddy12390@gmail.com'  # Email to receive alerts (e.g., 'admin@example.com')
+DEFAULT_ALERT_EMAIL = os.environ.get('DEFAULT_ALERT_EMAIL', '')
 
 print(f"✓ Configuration loaded from {__file__}")

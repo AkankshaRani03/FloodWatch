@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b5ed7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="FloodWatch">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/static/icons/floodwatch-icon.svg" type="image/svg+xml">
     <title>Alerts - FloodWatch Command Center</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <style>
@@ -276,6 +282,46 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (max-width: 480px) {
+            .alerts-shell {
+                width: calc(100% - 20px);
+                padding: 18px 0;
+            }
+
+            .alerts-header h1 {
+                font-size: 2rem;
+            }
+
+            .alert-actions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .back-button,
+            .clear-btn {
+                width: 100%;
+            }
+
+            .notification-header,
+            .notification-body,
+            .probability-meter,
+            .dismiss-row {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .detail-item {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
     </style>
 </head>
 <body>
@@ -409,5 +455,6 @@
             if (e.key === 'floodNotifications') loadNotifications();
         });
     </script>
+    <script src="/static/js/pwa.js"></script>
 </body>
 </html>
