@@ -111,8 +111,7 @@ async function runRiskAssessment() {
     try {
 
         const response = await fetchJSON(
-
-            "/predict",
+            "/api/predict-simple",
 
             {
 

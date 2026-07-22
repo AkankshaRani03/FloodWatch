@@ -584,7 +584,62 @@ def report_incident():
     return render_template('citizen_dashboard.html', user=user)
 
 
-@app.route('/predict', methods=['POST'])
+@app.route('/api/predict-simple', methods=['POST'])
+@login_required
+def predict_simple():
+    """
+    SIMPLE prediction endpoint that works WITHOUT GEE
+    Just uses the trained model directly with mock features
+    
+    This is the FAILSAFE endpoint when GEE is not available
+    """
+    try:
+        data = request.get_json()
+        lat = float(data.get('latitude'))
+        lon = float(data.get('longitude'))
+        
+        # Validate coordinates
+        if not validate_coordinates(lat, lon):
+            return jsonify({'error': 'Invalid coordinates'}), 400
+        
+        # Use MOCK features (no GEE needed!)
+        print(f"\n📊 Using mock features (no GEE)...")
+        features = extract_features_for_location_mock(lat, lon)
+        
+        if features is None:
+            return jsonify({'error': 'Invalid coordinates'}), 400
+        
+        # Check if model is available
+        if model is None:
+            return jsonify({
+                'error': 'Model not loaded',
+                'features': features
+            }), 503
+        
+        # Make prediction
+        feature_array = [[
+            features['rainfall_7d_mm'],
+            features['soil_moisture'],
+            features['elevation_m'],
+            features['slope_deg']
+        ]]
+        
+        probability = model.predict_proba(feature_array)[0][1]
+        
+        # Format response
+        response = format_prediction_response(probability, features)
+        response['data_source'] = 'Mock Features (No GEE)'
+        response['method'] = 'simple'
+        
+        return jsonify(response), 200
+        
+    except Exception as e:
+        import traceback
+        print(f"\n❌ ERROR in /api/predict-simple:")
+        print(f"Error: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
 @login_required
 def predict():
     """
