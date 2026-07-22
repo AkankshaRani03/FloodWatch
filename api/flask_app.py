@@ -18,6 +18,7 @@ sys.path.append(str(Path(__file__).parent.parent / 'src'))
 sys.path.append(str(Path(__file__).parent.parent / 'configs'))
 
 from feature_extraction_gee import initialize_gee, extract_features_for_location, get_safe_date_range
+from feature_extraction_mock import extract_features_for_location_mock
 from gee_setup import setup_gee_credentials_from_env
 from model_training import load_model
 from utils import validate_coordinates, format_prediction_response
@@ -624,19 +625,15 @@ def predict():
         # Get safe date range (avoid real-time data issues)
         start_date, end_date = get_safe_date_range(days_back=30, window_days=7)
         
-        # Choose data source based on configuration
-        if WEATHER_API_AVAILABLE and hasattr(config, 'USE_WEATHER_API') and config.USE_WEATHER_API and config.WEATHER_API_KEY:
-            print(f"\n🌤️ Using Weather API for real-time data...")
-            # Extract features using Weather API (real-time)
-            features = extract_features_from_weather_api(
-                lat, lon, 
-                config.WEATHER_API_KEY,
-                days_back=getattr(config, 'WEATHER_API_DAYS_BACK', 7)
-            )
-        else:
-            print(f"\n🛰️ Using GEE for historical data...")
-            # Extract features from GEE (historical)
+        # Try GEE first, fallback to mock if unavailable
+        if gee_initialized:
+            print(f"\n🛰️ Using GEE for real-time data...")
             features = extract_features_for_location(lat, lon, start_date, end_date)
+            data_source = "GEE (Satellite)"
+        else:
+            print(f"\n📊 GEE unavailable, using mock features for testing...")
+            features = extract_features_for_location_mock(lat, lon, start_date, end_date)
+            data_source = "Mock (Testing Mode)"
         
         # Check if features extraction failed
         if features is None:
@@ -669,12 +666,8 @@ def predict():
         response = format_prediction_response(probability, features)
         
         # Add data source info
-        data_source = "Weather API (Real-time)" if (WEATHER_API_AVAILABLE and hasattr(config, 'USE_WEATHER_API') and config.USE_WEATHER_API and config.WEATHER_API_KEY) else "GEE (Historical)"
         response['data_source'] = data_source
-        
-        # Add date range if using GEE
-        if not (WEATHER_API_AVAILABLE and hasattr(config, 'USE_WEATHER_API') and config.USE_WEATHER_API and config.WEATHER_API_KEY):
-            response['date_range'] = {'start': start_date, 'end': end_date}
+        response['date_range'] = {'start': start_date, 'end': end_date}
         
         # Save prediction to user's history
         email_sent_flag = False
