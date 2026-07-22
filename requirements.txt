@@ -33,8 +33,11 @@ joblib==1.3.2
 geopandas==0.14.1
 shapely==2.0.2
 
-# Web Push Notifications
-pywebpush==1.14.1
+# Web Push Notifications (use compatible versions)
+http-ece==1.1.0
+pywebpush==1.13.0
+
+# Cryptography
 cryptography==41.0.7
 
 # Utilities
