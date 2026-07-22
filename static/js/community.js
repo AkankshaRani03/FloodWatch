@@ -17,7 +17,7 @@ function initializeCommunityDashboard() {
     
     // Initialize map
     if (typeof L !== "undefined") {
-        initializeMap("communityMap");
+        initializeMap("map");
 
         // Sync the map with the lat/lng already sitting in the
         // Check Flood Risk inputs, so it opens centered on that
@@ -170,6 +170,8 @@ async function runRiskAssessment() {
 
     if (loadingCard) loadingCard.classList.remove("hidden");
     if (resultsCard) resultsCard.classList.add("hidden");
+    
+    dismissPredictionAlert();
 
     try {
 
@@ -180,6 +182,7 @@ async function runRiskAssessment() {
         });
 
         updatePrediction(response);
+        broadcastPredictionAlert(response, latitude, longitude);
 
     } catch (error) {
 
@@ -199,7 +202,8 @@ function updatePrediction(data) {
     const resultsCard = document.getElementById("resultsCard");
     if (resultsCard) resultsCard.classList.remove("hidden");
 
-    const probability = Number(data.flood_probability || 0);
+    const probability = getPredictionPercent(data);
+    const features = getPredictionFeatures(data);
 
     setText("riskPercentage", probability.toFixed(1) + "%");
 
@@ -217,10 +221,10 @@ function updatePrediction(data) {
     // only update it if one is present on the page.
     setText("riskSummary", riskLevel.label);
 
-    setText("rainfall", formatNumber(data.rainfall) + " mm");
-    setText("soilMoisture", formatNumber(data.soil_moisture));
-    setText("elevation", formatNumber(data.elevation) + " m");
-    setText("slope", formatNumber(data.slope) + "°");
+    setText("rainfall", formatNumber(features.rainfall) + " mm");
+    setText("soilMoisture", formatNumber(features.soilMoisture));
+    setText("elevation", formatNumber(features.elevation) + " m");
+    setText("slope", formatNumber(features.slope) + " deg");
 
 }
 
@@ -642,4 +646,62 @@ function wireAddForm(cardConfig) {
             showError(`Couldn't save ${cardConfig.label.toLowerCase()} right now. Please try again.`);
         }
     });
+}
+
+
+// ==========================================================
+// Prediction Alert Banner (MEDIUM/HIGH)
+// ==========================================================
+
+function broadcastPredictionAlert(data, lat, lon) {
+    const probability = getPredictionPercent(data);
+    const riskLevel = getRiskLevel(probability);
+    
+    if (riskLevel.label === 'MEDIUM' || riskLevel.label === 'HIGH') {
+        reverseGeocode(lat, lon).then(placeName => {
+            showPredictionAlertBanner(riskLevel.label, probability, placeName);
+        });
+        updateNotificationBadge();
+    }
+}
+
+function showPredictionAlertBanner(level, probability, placeName) {
+    dismissPredictionAlert();
+    
+    const banner = document.createElement('div');
+    banner.id = 'predictionAlertBanner';
+    banner.className = `prediction-alert-banner alert-${level.toLowerCase()}`;
+    banner.innerHTML = `
+        <div class="alert-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="alert-content">
+            <strong>${level} FLOOD RISK DETECTED</strong>
+            <p>${probability.toFixed(1)}% flood probability — ${placeName}</p>
+        </div>
+        <button class="alert-dismiss" onclick="dismissPredictionAlert()">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    `;
+    
+    document.body.appendChild(banner);
+    setTimeout(() => banner.classList.add('show'), 100);
+}
+
+function dismissPredictionAlert() {
+    const existing = document.getElementById('predictionAlertBanner');
+    if (existing) {
+        existing.classList.remove('show');
+        setTimeout(() => existing.remove(), 300);
+    }
+}
+
+async function updateNotificationBadge() {
+    try {
+        const data = await fetchJSON('/notifications/count');
+        const badge = document.getElementById('notificationBadge');
+        if (badge) badge.textContent = data.count || 0;
+    } catch (error) {
+        console.log('Could not update notification badge');
+    }
 }

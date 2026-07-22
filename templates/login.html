@@ -8,15 +8,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="FloodWatch">
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-icon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" type="image/png">
     <title>Login - FloodWatch Command Center</title>
     <link rel="stylesheet"
 href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 </head>
 <body>
     <main class="auth-shell">
         <section class="brand-panel">
-            <div class="brand-mark">FW</div>
+            <div class="brand-mark has-logo">
+                <img src="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" alt="Flood Prediction System logo">
+            </div>
             <p class="eyebrow">FloodWatch Command Center</p>
             <h1>Operational flood intelligence for response teams.</h1>
             <p>Secure access for NGO partners, government authorities, community coordinators, and field volunteers.</p>
@@ -59,6 +62,7 @@ href="{{ url_for('static', filename='css/login.css') }}">
     </main>
 
     <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
 </body>
 </html>

@@ -6,12 +6,14 @@ Generates systematic grid predictions across specified region
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from src.feature_extraction_gee import initialize_gee, extract_features_for_location
 from src.arcgis_export import export_all_formats
+from src.utils import classify_risk_level
 from configs.config import MODEL_PATH, GEE_PROJECT
 import joblib
 from tqdm import tqdm
@@ -81,13 +83,8 @@ def predict_grid_batch(grid_locations, model, region_name='India'):
             prediction = model.predict(feature_array)[0]
             probability = model.predict_proba(feature_array)[0][1]
             
-            # Determine risk level
-            if probability < 0.3:
-                risk = 'LOW'
-            elif probability < 0.7:
-                risk = 'MEDIUM'
-            else:
-                risk = 'HIGH'
+            # Determine risk level using the same thresholds as the API.
+            risk = classify_risk_level(probability)
             
             results.append({
                 'location': f'Grid_{i+1}',
@@ -256,12 +253,7 @@ def generate_predictions_for_cities(cities_list):
             prediction = model.predict(feature_array)[0]
             probability = model.predict_proba(feature_array)[0][1]
             
-            if probability < 0.3:
-                risk = 'LOW'
-            elif probability < 0.7:
-                risk = 'MEDIUM'
-            else:
-                risk = 'HIGH'
+            risk = classify_risk_level(probability)
             
             results.append({
                 'location': name,

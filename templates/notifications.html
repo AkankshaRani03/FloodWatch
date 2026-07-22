@@ -8,9 +8,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="FloodWatch">
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/static/icons/floodwatch-icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/static/icons/floodwatch-gee-logo-source.png" type="image/png">
     <title>Alerts - FloodWatch Command Center</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/mobile.css">
     <style>
         body {
             background:
@@ -327,10 +328,16 @@
 <body>
     <div class="alerts-shell">
         <header class="alerts-header">
-            <div>
-                <p class="eyebrow">FloodWatch Command Center</p>
-                <h1>Alerts & Notifications</h1>
-                <p>Logged medium and high probability flood assessments for operational follow-up.</p>
+            <div style="display:flex;align-items:center;gap:18px;">
+                <div class="brand-mark has-logo" style="flex-shrink:0;">
+                    <img src="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}"
+                         alt="Flood Prediction System logo">
+                </div>
+                <div>
+                    <p class="eyebrow">FloodWatch Command Center</p>
+                    <h1>Alerts &amp; Notifications</h1>
+                    <p>Logged medium and high probability flood assessments for operational follow-up.</p>
+                </div>
             </div>
             <div class="alert-actions">
                 <a href="/" class="back-button">Back to Map</a>
@@ -348,8 +355,22 @@
     </div>
 
     <script>
-        function loadNotifications() {
-            const notifications = JSON.parse(localStorage.getItem('floodNotifications') || '[]');
+        async function loadNotifications() {
+            let notifications = [];
+
+            try {
+                const response = await fetch('/api/notifications?unread=1');
+                if (response.ok) {
+                    notifications = await response.json();
+                }
+            } catch (error) {
+                notifications = [];
+            }
+
+            if (!notifications.length) {
+                notifications = JSON.parse(localStorage.getItem('floodNotifications') || '[]');
+            }
+
             const container = document.getElementById('notificationsList');
             const noNotifications = document.getElementById('noNotifications');
 
@@ -360,20 +381,22 @@
             }
 
             noNotifications.style.display = 'none';
-            notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
             container.innerHTML = notifications.map((notif, index) => {
-                const riskClass = notif.risk_level.toLowerCase();
-                const probability = (notif.flood_probability * 100).toFixed(1);
-                const date = new Date(notif.timestamp);
+                const riskLevel = (notif.risk_level || 'MEDIUM').toUpperCase();
+                const riskClass = riskLevel.toLowerCase();
+                const probabilityRaw = Number(notif.flood_probability || 0);
+                const probability = (probabilityRaw <= 1 ? probabilityRaw * 100 : probabilityRaw).toFixed(1);
+                const features = notif.features || {};
+                const location = notif.location || { lat: notif.latitude || 0, lon: notif.longitude || 0 };
+                const date = new Date(notif.created_at || notif.timestamp);
                 const formattedDate = date.toLocaleString();
 
                 return `
                     <div class="notification-alert ${riskClass}">
                         <div class="notification-header">
                             <div class="notification-title">
-                                <h2>${notif.risk_level} Risk Alert</h2>
-                                <p>Location: ${notif.location.lat.toFixed(4)}, ${notif.location.lon.toFixed(4)} | ${formattedDate}</p>
+                                <h2>${riskLevel} Flood Alert</h2>
+                                <p>${notif.message || 'Flood prediction alert'} | ${formattedDate}</p>
                             </div>
                             <span class="notification-badge ${riskClass}">${probability}% probability</span>
                         </div>
@@ -390,28 +413,28 @@
                                 <div class="features-grid">
                                     <div class="feature-box">
                                         <div class="feature-box-label">Rainfall 7-day</div>
-                                        <div class="feature-box-value">${notif.features.rainfall_7d_mm.toFixed(1)} mm</div>
+                                        <div class="feature-box-value">${Number(features.rainfall_7d_mm || 0).toFixed(1)} mm</div>
                                     </div>
                                     <div class="feature-box">
                                         <div class="feature-box-label">Soil Moisture</div>
-                                        <div class="feature-box-value">${notif.features.soil_moisture.toFixed(3)}</div>
+                                        <div class="feature-box-value">${Number(features.soil_moisture || 0).toFixed(3)}</div>
                                     </div>
                                     <div class="feature-box">
                                         <div class="feature-box-label">Elevation</div>
-                                        <div class="feature-box-value">${notif.features.elevation_m.toFixed(1)} m</div>
+                                        <div class="feature-box-value">${Number(features.elevation_m || 0).toFixed(1)} m</div>
                                     </div>
                                     <div class="feature-box">
                                         <div class="feature-box-label">Slope</div>
-                                        <div class="feature-box-value">${notif.features.slope_deg.toFixed(1)} deg</div>
+                                        <div class="feature-box-value">${Number(features.slope_deg || 0).toFixed(1)} deg</div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="notification-section">
                                 <h3>Location Details</h3>
-                                <div class="detail-item"><span class="detail-label">Latitude</span><span class="detail-value">${notif.location.lat.toFixed(6)}</span></div>
-                                <div class="detail-item"><span class="detail-label">Longitude</span><span class="detail-value">${notif.location.lon.toFixed(6)}</span></div>
-                                <div class="detail-item"><span class="detail-label">Risk Level</span><span class="detail-value">${notif.risk_level}</span></div>
+                                <div class="detail-item"><span class="detail-label">Place</span><span class="detail-value location-name" data-lat="${Number(location.lat).toFixed(6)}" data-lon="${Number(location.lon).toFixed(6)}">Resolving…</span></div>
+                                <div class="detail-item"><span class="detail-label">Coordinates</span><span class="detail-value">${Number(location.lat).toFixed(4)}°, ${Number(location.lon).toFixed(4)}°</span></div>
+                                <div class="detail-item"><span class="detail-label">Risk Level</span><span class="detail-value">${riskLevel}</span></div>
                                 <div class="detail-item"><span class="detail-label">Data Source</span><span class="detail-value">${notif.data_source || 'GEE Historical'}</span></div>
                             </div>
 
@@ -429,14 +452,27 @@
                         </div>
 
                         <div class="dismiss-row">
-                            <button class="clear-btn" onclick="removeNotification(${index})">Dismiss</button>
+                            <button class="clear-btn" onclick="removeNotification(${index}, ${notif.id || 'null'})">Dismiss</button>
                         </div>
                     </div>
                 `;
             }).join('');
+
+            // Resolve all "Resolving…" place-name spans asynchronously
+            container.querySelectorAll('.location-name[data-lat]').forEach(async (el) => {
+                const lat = parseFloat(el.dataset.lat);
+                const lon = parseFloat(el.dataset.lon);
+                el.textContent = await reverseGeocode(lat, lon);
+            });
         }
 
-        function removeNotification(index) {
+        async function removeNotification(index, notificationId = null) {
+            if (notificationId) {
+                await fetch(`/api/notifications/${notificationId}/read`, { method: 'POST' });
+                loadNotifications();
+                return;
+            }
+
             const notifications = JSON.parse(localStorage.getItem('floodNotifications') || '[]');
             notifications.splice(index, 1);
             localStorage.setItem('floodNotifications', JSON.stringify(notifications));
@@ -446,7 +482,9 @@
         function clearAllNotifications() {
             if (confirm('Clear all notifications?')) {
                 localStorage.removeItem('floodNotifications');
-                loadNotifications();
+                fetch('/notifications/mark_read', { method: 'POST' }).finally(() => {
+                    loadNotifications();
+                });
             }
         }
 
@@ -454,7 +492,29 @@
         window.addEventListener('storage', (e) => {
             if (e.key === 'floodNotifications') loadNotifications();
         });
+
+        // ── Reverse Geocoding (Nominatim) ──────────────────────────
+        const _geocodeCache = {};
+        async function reverseGeocode(lat, lon) {
+            const key = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+            if (_geocodeCache[key]) return _geocodeCache[key];
+            try {
+                const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10`;
+                const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                const a = data.address || {};
+                const place = a.city || a.town || a.village || a.county || a.state_district || a.state || 'Unknown location';
+                const state = a.state || '';
+                const name = state && state !== place ? `${place}, ${state}` : place;
+                _geocodeCache[key] = name;
+                return name;
+            } catch {
+                return `${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
+            }
+        }
     </script>
+    <script src="/static/js/mobile.js"></script>
     <script src="/static/js/pwa.js"></script>
 </body>
 </html>

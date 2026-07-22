@@ -58,8 +58,8 @@ DEBUG_MODE = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
 
 # Risk Level Thresholds
 RISK_THRESHOLDS = {
-    'HIGH': 0.7,
-    'MEDIUM': 0.4,
+    'HIGH': float(os.environ.get('RISK_THRESHOLD_HIGH', 0.70)),
+    'MEDIUM': float(os.environ.get('RISK_THRESHOLD_MEDIUM', 0.40)),
     'LOW': 0.0
 }
 

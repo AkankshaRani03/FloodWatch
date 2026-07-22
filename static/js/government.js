@@ -135,6 +135,8 @@ async function runGovernmentRiskAssessment() {
 
         }
 
+        broadcastPredictionAlert(response, latitude, longitude);
+
     }
 
     catch (error) {
@@ -160,11 +162,9 @@ function updateGovernmentPrediction(data) {
 
     if (resultsCard) resultsCard.classList.remove("hidden");
 
-    const rawProbability = Number(data.flood_probability || 0);
+    const probability = getPredictionPercent(data);
 
-    const probability = rawProbability <= 1 ? rawProbability * 100 : rawProbability;
-
-    const features = data.features || {};
+    const features = getPredictionFeatures(data);
 
     setGovernmentText("riskPercentage", probability.toFixed(1) + "%");
 
@@ -192,7 +192,7 @@ function updateGovernmentPrediction(data) {
 
         "rainfall",
 
-        formatNumber(features.rainfall_7d_mm ?? data.rainfall) + " mm"
+        formatNumber(features.rainfall) + " mm"
 
     );
 
@@ -200,7 +200,7 @@ function updateGovernmentPrediction(data) {
 
         "soilMoisture",
 
-        formatNumber(features.soil_moisture ?? data.soil_moisture)
+        formatNumber(features.soilMoisture)
 
     );
 
@@ -208,7 +208,7 @@ function updateGovernmentPrediction(data) {
 
         "elevation",
 
-        formatNumber(features.elevation_m ?? data.elevation) + " m"
+        formatNumber(features.elevation) + " m"
 
     );
 
@@ -216,7 +216,7 @@ function updateGovernmentPrediction(data) {
 
         "slope",
 
-        formatNumber(features.slope_deg ?? data.slope) + " deg"
+        formatNumber(features.slope) + " deg"
 
     );
 
@@ -1122,3 +1122,87 @@ document.addEventListener(
     refreshGovernmentDashboard
 
 );
+
+
+// ==========================================================
+// Prediction Alert Banner (MEDIUM/HIGH)
+// ==========================================================
+
+function broadcastPredictionAlert(data, lat, lon) {
+
+    const probability = getPredictionPercent(data);
+
+    const riskLevel = getGovernmentRiskLevel(probability);
+
+    if (riskLevel.label === 'MEDIUM' || riskLevel.label === 'HIGH') {
+
+        reverseGeocode(lat, lon).then(placeName => {
+
+            showPredictionAlertBanner(riskLevel.label, probability, placeName);
+
+        });
+
+        refreshBadge();
+
+    }
+
+}
+
+function showPredictionAlertBanner(level, probability, placeName) {
+
+    dismissPredictionAlert();
+
+    const banner = document.createElement('div');
+    banner.id = 'predictionAlertBanner';
+    banner.className = `prediction-alert-banner alert-${level.toLowerCase()}`;
+    banner.innerHTML = `
+        <div class="alert-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="alert-content">
+            <strong>${level} FLOOD RISK DETECTED</strong>
+            <p>${probability.toFixed(1)}% flood probability — ${placeName}</p>
+        </div>
+        <button class="alert-dismiss" onclick="dismissPredictionAlert()">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    `;
+
+    document.body.appendChild(banner);
+    setTimeout(() => banner.classList.add('show'), 100);
+
+}
+
+function dismissPredictionAlert() {
+
+    const existing = document.getElementById('predictionAlertBanner');
+
+    if (existing) {
+
+        existing.classList.remove('show');
+
+        setTimeout(() => existing.remove(), 300);
+
+    }
+
+}
+
+async function refreshBadge() {
+
+    try {
+
+        const data = await fetch('/notifications/count');
+
+        const json = await data.json();
+
+        const badge = document.getElementById('notificationBadge');
+
+        if (badge) badge.textContent = json.count || 0;
+
+    } catch (e) {
+
+        // ignore
+
+    }
+
+}

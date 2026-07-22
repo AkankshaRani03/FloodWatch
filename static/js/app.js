@@ -22,12 +22,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function initMap() {
     // Create map centered on India
-    map = L.map('map').setView([20.5937, 78.9629], 5);
+    map = L.map('map', {
+        zoomControl: false
+    }).setView([20.5937, 78.9629], 5);
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
+
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
-        maxZoom: 18
+        maxZoom: 19
+    });
+
+    const satelliteLayer = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 19
+        }
+    );
+
+    const hybridLayer = L.layerGroup([
+        L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            {
+                attribution: 'Tiles &copy; Esri',
+                maxZoom: 19
+            }
+        ),
+        L.tileLayer(
+            'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+            {
+                attribution: 'Labels &copy; Esri',
+                maxZoom: 19
+            }
+        )
+    ]);
+
+    streetLayer.addTo(map);
+
+    L.control.layers({
+        Streets: streetLayer,
+        Satellite: satelliteLayer,
+        Hybrid: hybridLayer
+    }, null, {
+        position: 'topleft',
+        collapsed: true
     }).addTo(map);
 
     // Add click event to map
@@ -167,7 +208,8 @@ function displayResults(data, lat, lon) {
     document.getElementById('resultsCard').style.display = 'block';
 
     // Update risk percentage and gauge
-    const percentage = (data.flood_probability * 100).toFixed(1);
+    const percentageValue = getPredictionPercent(data);
+    const percentage = percentageValue.toFixed(1);
     document.getElementById('riskPercentage').textContent = percentage + '%';
     document.getElementById('gaugeFill').style.width = percentage + '%';
 
@@ -186,10 +228,11 @@ function displayResults(data, lat, lon) {
 
     // Update features
     if (data.features) {
-        document.getElementById('rainfall').textContent = data.features.rainfall_7d_mm.toFixed(2) + ' mm';
-        document.getElementById('soilMoisture').textContent = data.features.soil_moisture.toFixed(4) + ' m3/m3';
-        document.getElementById('elevation').textContent = data.features.elevation_m.toFixed(2) + ' m';
-        document.getElementById('slope').textContent = data.features.slope_deg.toFixed(2) + ' deg';
+        const features = getPredictionFeatures(data);
+        document.getElementById('rainfall').textContent = formatNumber(features.rainfall) + ' mm';
+        document.getElementById('soilMoisture').textContent = formatNumber(features.soilMoisture, 4) + ' m3/m3';
+        document.getElementById('elevation').textContent = formatNumber(features.elevation) + ' m';
+        document.getElementById('slope').textContent = formatNumber(features.slope) + ' deg';
     }
 
     // Update marker on map
@@ -212,8 +255,8 @@ function displayResults(data, lat, lon) {
     // Scroll to results
     document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-    // Check if we need to create a notification (probability >= 50%)
-    if (data.flood_probability >= 0.5) {
+    // Keep fallback browser notifications aligned with backend MEDIUM/HIGH alerts.
+    if (data.risk_level === 'MEDIUM' || data.risk_level === 'HIGH') {
         saveNotification(data, lat, lon);
         showAlertMessage(data.flood_probability, data.risk_level);
     }
@@ -374,8 +417,6 @@ document.addEventListener('DOMContentLoaded', function () {
 // ======================================================
 // FloodWatch Community Dashboard
 // ======================================================
-
-let map;
 
 document.addEventListener("DOMContentLoaded", function () {
 

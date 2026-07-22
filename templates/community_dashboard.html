@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="FloodWatch">
 <link rel="manifest" href="/manifest.json">
-<link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-icon.svg') }}" type="image/svg+xml">
+<link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" type="image/png">
 
 <title>
 FloodWatch Community Command Center
@@ -27,6 +27,10 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet"
 href="{{ url_for('static',
 filename='css/common.css') }}">
+
+<link rel="stylesheet"
+href="{{ url_for('static',
+filename='css/mobile.css') }}">
 
 <link rel="stylesheet"
 href="{{ url_for('static',
@@ -45,11 +49,9 @@ filename='css/community.css') }}">
 <a href="/" class="brand-linkup">
 <div class="brand-lockup">
 
-<div class="brand-mark">
-
-<i class="fa-solid fa-people-group"></i>
-
-</div>
+<div class="brand-mark has-logo">
+                <img src="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" alt="Flood Prediction System logo">
+            </div>
 
 <div>
 
@@ -185,25 +187,13 @@ Logout
 
 </div>
 
-<div class="input-grid">
-
-<div class="input-group">
-
-<label>Latitude</label>
-
-<input type="number" id="latitude" value="17.385" step="0.0001">
-
+<div class="map-select-hint">
+<i class="fa-solid fa-location-crosshairs"></i>
+Click anywhere on the map to select a location
 </div>
 
-<div class="input-group">
-
-<label>Longitude</label>
-
-<input type="number" id="longitude" value="78.4867" step="0.0001">
-
-</div>
-
-</div>
+<input type="hidden" id="latitude" value="17.385">
+<input type="hidden" id="longitude" value="78.4867">
 
 <button id="predictBtn" class="btn-primary">
 
@@ -309,55 +299,7 @@ Run Risk Assessment
 
 <section class="map-panel">
 
-<div class="panel-header map-heading">
-
-<div>
-
-<p class="eyebrow">Operations Map</p>
-
-<h2>Live Community Monitoring</h2>
-
-</div>
-
-<div class="map-legend">
-
-<div class="legend-item">
-
-<span class="legend-color high"></span>
-
-<span>Citizen Reports</span>
-
-</div>
-
-<div class="legend-item">
-
-<span class="legend-color medium"></span>
-
-<span>Volunteers</span>
-
-</div>
-
-<div class="legend-item">
-
-<span class="legend-color low"></span>
-
-<span>Shelters</span>
-
-</div>
-
-</div>
-
-</div>
-
-<div id="communityMap"></div>
-
-<div class="map-footer">
-
-<i class="fa-solid fa-circle-info"></i>
-
-<span>Click any incident marker to view details and assign volunteers.</span>
-
-</div>
+<div id="map"></div>
 
 </section>
 
@@ -951,6 +893,7 @@ FloodWatch Community Command Center
 <script src="{{ url_for('static', filename='js/common.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/community.js') }}"></script>
+<script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
 
 </body>

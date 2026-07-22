@@ -216,6 +216,40 @@ function showError(message){
  
 }
 // ============================================================
+// Reverse Geocoding — Nominatim
+// Converts lat/lon to a human-readable place name.
+// Results are cached in memory so the same coordinates are
+// never fetched more than once per page load.
+// ============================================================
+
+const _geocodeCache = {};
+
+async function reverseGeocode(lat, lon) {
+    const key = `${Number(lat).toFixed(4)},${Number(lon).toFixed(4)}`;
+    if (_geocodeCache[key]) return _geocodeCache[key];
+    try {
+        const url =
+            `https://nominatim.openstreetmap.org/reverse` +
+            `?lat=${lat}&lon=${lon}&format=json&zoom=10`;
+        const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+        if (!res.ok) throw new Error('geocode_fail');
+        const data = await res.json();
+        const a = data.address || {};
+        const city  = a.city || a.town || a.village || a.suburb ||
+                      a.county || a.state_district || a.state || '';
+        const state = a.state || '';
+        const name  = (city && state && state !== city)
+            ? `${city}, ${state}`
+            : city || state || `${Number(lat).toFixed(4)}°, ${Number(lon).toFixed(4)}°`;
+        _geocodeCache[key] = name;
+        return name;
+    } catch {
+        return `${Number(lat).toFixed(4)}°, ${Number(lon).toFixed(4)}°`;
+    }
+}
+
+
+// ============================================================
 // Map Utilities
 // ============================================================
  
@@ -236,19 +270,61 @@ function initializeMap(containerId = "map") {
  
     }
  
-    map = L.map(containerId).setView([20.5937, 78.9629], 5);
- 
-    L.tileLayer(
- 
+    map = L.map(containerId, {
+        zoomControl: false
+    }).setView([20.5937, 78.9629], 5);
+
+    L.control.zoom({
+        position: "topright"
+    }).addTo(map);
+
+    const streetLayer = L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
- 
         {
- 
-            attribution: "&copy; OpenStreetMap Contributors"
- 
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
         }
- 
-    ).addTo(map);
+    );
+
+    const satelliteLayer = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+            maxZoom: 19,
+            attribution: "Tiles &copy; Esri"
+        }
+    );
+
+    const hybridLabels = L.tileLayer(
+        "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        {
+            maxZoom: 19,
+            attribution: "Labels &copy; Esri"
+        }
+    );
+
+    const hybridLayer = L.layerGroup([
+        L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            {
+                maxZoom: 19,
+                attribution: "Tiles &copy; Esri"
+            }
+        ),
+        hybridLabels
+    ]);
+
+    const baseLayers = {
+        "Streets": streetLayer,
+        "Satellite": satelliteLayer,
+        "Hybrid": hybridLayer
+    };
+
+    streetLayer.addTo(map);
+
+    L.control.layers(baseLayers, null, {
+        position: "topleft",
+        collapsed: true
+    }).addTo(map);
  
     map.on("click", function (e) {
  
@@ -270,46 +346,60 @@ function initializeMap(containerId = "map") {
 // ============================================================
 // Marker
 // ============================================================
- 
+
 function updateLocation(lat, lng) {
- 
+
     const latitude = document.getElementById("latitude");
- 
+
     const longitude = document.getElementById("longitude");
- 
+
     if (latitude) {
- 
+
         latitude.value = Number(lat).toFixed(6);
- 
+
     }
- 
+
     if (longitude) {
- 
+
         longitude.value = Number(lng).toFixed(6);
- 
+
     }
- 
+
     if (!map) return;
- 
+
     if (marker) {
- 
+
         marker.remove();
- 
+
     }
- 
+
+    // Place marker immediately with coordinates, then update
+    // the popup with the resolved place name once geocoding completes.
     marker = L.marker([lat, lng])
- 
+
         .addTo(map)
- 
+
         .bindPopup(
- 
-            `Latitude : ${lat.toFixed(4)}<br>
-             Longitude : ${lng.toFixed(4)}`
- 
+            `<strong>Locating…</strong><br>
+             <small>${Number(lat).toFixed(4)}°N, ${Number(lng).toFixed(4)}°E</small>`
         )
- 
+
         .openPopup();
- 
+
+    // Async: replace popup content with actual place name
+    reverseGeocode(lat, lng).then(placeName => {
+
+        if (marker) {
+
+            marker.setPopupContent(
+                `<strong>${placeName}</strong><br>
+                 <small>${Number(lat).toFixed(4)}°N, ${Number(lng).toFixed(4)}°E</small>`
+            );
+
+        }
+
+    });
+
 }
  
  
@@ -388,6 +478,48 @@ function formatPercentage(value) {
  
     return formatNumber(value, 1) + "%";
  
+}
+
+
+// ============================================================
+// Prediction Response Helpers
+// Backend keeps flood_probability as 0-1 for storage/email, while
+// dashboards display flood_probability_percent as 0-100.
+// ============================================================
+
+function getPredictionPercent(data) {
+
+    if (!data) return 0;
+
+    if (data.flood_probability_percent !== undefined) {
+
+        return Number(data.flood_probability_percent) || 0;
+
+    }
+
+    const raw = Number(data.flood_probability || 0);
+
+    return raw <= 1 ? raw * 100 : raw;
+
+}
+
+
+function getPredictionFeatures(data) {
+
+    const features = (data && data.features) || {};
+
+    return {
+
+        rainfall: features.rainfall_7d_mm ?? data?.rainfall,
+
+        soilMoisture: features.soil_moisture ?? data?.soil_moisture,
+
+        elevation: features.elevation_m ?? data?.elevation,
+
+        slope: features.slope_deg ?? data?.slope
+
+    };
+
 }
  
  

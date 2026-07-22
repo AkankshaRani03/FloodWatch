@@ -5,6 +5,7 @@ SQLite database for storing user credentials and sessions
 
 import sqlite3
 import os
+import json
 from pathlib import Path
 from datetime import datetime
 
@@ -86,11 +87,32 @@ def init_database():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             message TEXT NOT NULL,
             incident_id INTEGER,
+            alert_type TEXT DEFAULT 'incident',
+            risk_level TEXT,
+            flood_probability REAL,
+            latitude REAL,
+            longitude REAL,
+            features_json TEXT,
             is_read BOOLEAN DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (incident_id) REFERENCES incidents(id)
         )
     ''')
+
+    cursor.execute('PRAGMA table_info(notifications)')
+    existing_notification_columns = {row[1] for row in cursor.fetchall()}
+    notification_migrations = {
+        'alert_type': "ALTER TABLE notifications ADD COLUMN alert_type TEXT DEFAULT 'incident'",
+        'risk_level': 'ALTER TABLE notifications ADD COLUMN risk_level TEXT',
+        'flood_probability': 'ALTER TABLE notifications ADD COLUMN flood_probability REAL',
+        'latitude': 'ALTER TABLE notifications ADD COLUMN latitude REAL',
+        'longitude': 'ALTER TABLE notifications ADD COLUMN longitude REAL',
+        'features_json': 'ALTER TABLE notifications ADD COLUMN features_json TEXT'
+    }
+
+    for column, statement in notification_migrations.items():
+        if column not in existing_notification_columns:
+            cursor.execute(statement)
 
     conn.commit()
     conn.close()
@@ -445,12 +467,36 @@ def update_incident_status(incident_id, status):
 # Notifications (drives the community dashboard bell/feed)
 # ==========================================================
 
-def create_notification(message, incident_id=None):
+def create_notification(
+    message,
+    incident_id=None,
+    alert_type='incident',
+    risk_level=None,
+    flood_probability=None,
+    latitude=None,
+    longitude=None,
+    features=None
+):
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO notifications (message, incident_id) VALUES (?, ?)',
-                        (message, incident_id))
+        features_json = json.dumps(features) if features else None
+        cursor.execute('''
+            INSERT INTO notifications (
+                message, incident_id, alert_type, risk_level,
+                flood_probability, latitude, longitude, features_json
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            message,
+            incident_id,
+            alert_type,
+            risk_level,
+            flood_probability,
+            latitude,
+            longitude,
+            features_json
+        ))
         notification_id = cursor.lastrowid
         conn.commit()
         conn.close()
@@ -460,15 +506,37 @@ def create_notification(message, incident_id=None):
         return None
 
 
-def get_notifications(limit=20):
+def get_notifications(limit=20, unread_only=False, alert_type=None):
     try:
         conn = get_connection()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM notifications ORDER BY created_at DESC LIMIT ?', (limit,))
+        filters = []
+        params = []
+
+        if unread_only:
+            filters.append('is_read = 0')
+
+        if alert_type:
+            filters.append('alert_type = ?')
+            params.append(alert_type)
+
+        where_clause = f"WHERE {' AND '.join(filters)}" if filters else ''
+        cursor.execute(
+            f'SELECT * FROM notifications {where_clause} ORDER BY created_at DESC LIMIT ?',
+            (*params, limit)
+        )
         rows = cursor.fetchall()
         conn.close()
-        return [dict(row) for row in rows]
+        notifications = []
+
+        for row in rows:
+            notification = dict(row)
+            features_json = notification.pop('features_json', None)
+            notification['features'] = json.loads(features_json) if features_json else None
+            notifications.append(notification)
+
+        return notifications
     except Exception as e:
         print(f"Error fetching notifications: {e}")
         return []
@@ -497,6 +565,23 @@ def mark_all_notifications_read():
         return True
     except Exception as e:
         print(f"Error marking notifications read: {e}")
+        return False
+
+
+def mark_notification_read(notification_id):
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            'UPDATE notifications SET is_read = 1 WHERE id = ?',
+            (notification_id,)
+        )
+        conn.commit()
+        updated = cursor.rowcount > 0
+        conn.close()
+        return updated
+    except Exception as e:
+        print(f"Error marking notification read: {e}")
         return False
 
 

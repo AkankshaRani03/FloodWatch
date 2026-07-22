@@ -3,8 +3,14 @@ Utility Functions
 Helper functions for the flood prediction system
 """
 
-import numpy as np
-import pandas as pd
+import os
+
+
+RISK_THRESHOLDS = {
+    'HIGH': float(os.environ.get('RISK_THRESHOLD_HIGH', 0.70)),
+    'MEDIUM': float(os.environ.get('RISK_THRESHOLD_MEDIUM', 0.40)),
+    'LOW': 0.0
+}
 
 
 def classify_risk_level(probability):
@@ -17,12 +23,34 @@ def classify_risk_level(probability):
     Returns:
         str: Risk level
     """
-    if probability >= 0.7:
+    if probability >= RISK_THRESHOLDS['HIGH']:
         return "HIGH"
-    elif probability >= 0.4:
+    elif probability >= RISK_THRESHOLDS['MEDIUM']:
         return "MEDIUM"
     else:
         return "LOW"
+
+
+def normalize_feature_payload(features):
+    """Return rounded feature values and flat aliases for dashboard use."""
+    if not features:
+        return {}, {}
+
+    normalized = {
+        'rainfall_7d_mm': round(float(features.get('rainfall_7d_mm', 0)), 2),
+        'soil_moisture': round(float(features.get('soil_moisture', 0)), 4),
+        'elevation_m': round(float(features.get('elevation_m', 0)), 2),
+        'slope_deg': round(float(features.get('slope_deg', 0)), 2)
+    }
+
+    aliases = {
+        'rainfall': normalized['rainfall_7d_mm'],
+        'soil_moisture': normalized['soil_moisture'],
+        'elevation': normalized['elevation_m'],
+        'slope': normalized['slope_deg']
+    }
+
+    return normalized, aliases
 
 
 def validate_coordinates(lat, lon):
@@ -54,14 +82,27 @@ def format_prediction_response(probability, features=None):
     Returns:
         dict: Formatted response
     """
+    probability = float(probability)
+    probability_percent = probability * 100
+    risk_level = classify_risk_level(probability)
+
     response = {
         'flood_probability': round(probability, 4),
-        'risk_level': classify_risk_level(probability),
-        'confidence': 'high' if abs(probability - 0.5) > 0.3 else 'medium'
+        'flood_probability_percent': round(probability_percent, 1),
+        'risk_level': risk_level,
+        'confidence': 'high' if abs(probability - 0.5) > 0.3 else 'medium',
+        'thresholds': {
+            'high': RISK_THRESHOLDS['HIGH'],
+            'medium': RISK_THRESHOLDS['MEDIUM'],
+            'high_percent': int(RISK_THRESHOLDS['HIGH'] * 100),
+            'medium_percent': int(RISK_THRESHOLDS['MEDIUM'] * 100)
+        }
     }
     
     if features:
-        response['features'] = features
+        normalized_features, aliases = normalize_feature_payload(features)
+        response['features'] = normalized_features
+        response.update(aliases)
     
     return response
 

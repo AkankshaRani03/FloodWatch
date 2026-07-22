@@ -1,0 +1,362 @@
+/* ============================================================
+   FloodWatch Mobile Styles
+   GPS Button · Share Button · Install Banner · Splash Screen
+   Pull-to-Refresh Indicator · Mobile Toast
+   ============================================================ */
+
+
+/* ============================================================
+   1. SPLASH SCREEN
+   ============================================================ */
+
+#fwSplash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #0b1f33 0%, #0f766e 100%);
+    transition: opacity .5s ease, visibility .5s ease;
+}
+
+#fwSplash.fw-splash-hide {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.fw-splash-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    color: #fff;
+    padding: 32px;
+    animation: splashFadeIn .5s ease;
+}
+
+@keyframes splashFadeIn {
+    from { opacity: 0; transform: scale(.92) translateY(16px); }
+    to   { opacity: 1; transform: scale(1)  translateY(0); }
+}
+
+.fw-splash-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 24px;
+    object-fit: contain;
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 16px 48px rgba(0,0,0,.4);
+}
+
+.fw-splash-title {
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 0;
+    letter-spacing: -.01em;
+}
+
+.fw-splash-sub {
+    font-size: .95rem;
+    opacity: .8;
+    margin: 0;
+}
+
+.fw-splash-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(255,255,255,.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: splashSpin .9s linear infinite;
+    margin-top: 8px;
+}
+
+@keyframes splashSpin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* ============================================================
+   2. GPS BUTTON
+   ============================================================ */
+
+.btn-gps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 18px;
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+    color: #0369a1;
+    font-family: inherit;
+    font-size: .95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all .22s ease;
+    margin-bottom: 10px;
+}
+
+.btn-gps:hover,
+.btn-gps:focus-visible {
+    background: linear-gradient(135deg, #dbeafe, #dcfce7);
+    border-color: #0284c7;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(14,165,233,.22);
+}
+
+.btn-gps:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-gps i {
+    font-size: 1.1rem;
+}
+
+
+/* ============================================================
+   3. SHARE BUTTON
+   ============================================================ */
+
+.fw-share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 46px;
+    margin-top: 14px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6366f1, #0f766e);
+    color: #fff;
+    font-family: inherit;
+    font-size: .92rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .22s ease;
+}
+
+.fw-share-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(99,102,241,.3);
+    filter: brightness(1.08);
+}
+
+.fw-share-btn i {
+    font-size: 1rem;
+}
+
+
+/* ============================================================
+   4. PWA INSTALL BANNER
+   ============================================================ */
+
+.fw-install-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9800;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -8px 28px rgba(15,23,42,.14);
+    transform: translateY(110%);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+
+.fw-install-banner.fw-install-visible {
+    transform: translateY(0);
+}
+
+.fw-install-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: #f0f9ff;
+    padding: 4px;
+    flex-shrink: 0;
+}
+
+.fw-install-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.fw-install-text strong {
+    display: block;
+    font-size: .92rem;
+    color: #0f172a;
+}
+
+.fw-install-text span {
+    font-size: .78rem;
+    color: #64748b;
+}
+
+.fw-install-btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1d4ed8, #0f766e);
+    color: #fff;
+    font-family: inherit;
+    font-size: .88rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: filter .2s;
+}
+
+.fw-install-btn:hover {
+    filter: brightness(1.1);
+}
+
+.fw-install-dismiss {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: color .2s;
+}
+
+.fw-install-dismiss:hover {
+    color: #dc2626;
+}
+
+
+/* ============================================================
+   5. PULL-TO-REFRESH INDICATOR
+   ============================================================ */
+
+#fwPTRIndicator {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    z-index: 9700;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 4px 14px rgba(15,23,42,.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+}
+
+#fwPTRIndicator i {
+    font-size: 1.1rem;
+    color: #0b5ed7;
+    transition: transform .3s ease;
+}
+
+#fwPTRIndicator.fw-ptr-spin i {
+    animation: ptrSpin .8s linear infinite;
+}
+
+@keyframes ptrSpin {
+    to { transform: rotate(360deg); }
+}
+
+
+/* ============================================================
+   6. MOBILE TOAST
+   ============================================================ */
+
+#fwMobileToast {
+    position: fixed;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 9900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: 600;
+    color: #fff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease, transform .3s ease;
+    white-space: nowrap;
+    max-width: calc(100vw - 40px);
+    box-shadow: 0 8px 24px rgba(15,23,42,.25);
+}
+
+#fwMobileToast.fw-toast-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+#fwMobileToast.fw-toast-success { background: #16a34a; }
+#fwMobileToast.fw-toast-error   { background: #dc2626; }
+#fwMobileToast.fw-toast-info    { background: #0b5ed7; }
+#fwMobileToast.fw-toast-warning { background: #d97706; }
+
+
+/* ============================================================
+   7. IMAGE COMPRESSION INDICATOR
+   ============================================================ */
+
+.fw-compress-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: .76rem;
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   8. RESPONSIVE OVERRIDES FOR MOBILE DASHBOARDS
+   ============================================================ */
+
+@media (max-width: 600px) {
+    /* Give GPS button more breathing room on small screens */
+    .btn-gps {
+        min-height: 52px;
+        font-size: 1rem;
+    }
+
+    .fw-share-btn {
+        min-height: 50px;
+    }
+
+    #fwMobileToast {
+        bottom: calc(74px + env(safe-area-inset-bottom));
+        font-size: .85rem;
+        padding: 10px 16px;
+    }
+}

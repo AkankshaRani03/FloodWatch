@@ -8,9 +8,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="FloodWatch">
 <link rel="manifest" href="/manifest.json">
-<link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-icon.svg') }}" type="image/svg+xml">
+<link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" type="image/png">
 <title>FloodWatch — Flood Monitoring & Early Warning System</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
@@ -24,7 +25,9 @@
     <header class="topbar">
         <a href="/" class="brand-linkup">
             <div class="brand-lockup">
-                <div class="brand-mark">FW</div>
+                <div class="brand-mark has-logo">
+                    <img src="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" alt="Flood Prediction System logo">
+                </div>
                 <div>
                     <div class="eyebrow">Early Warning Network</div>
                     <h1>FloodWatch</h1>
@@ -169,6 +172,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{{ url_for('static', filename='js/common.js') }}"></script>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
 </body>
 </html>

@@ -483,39 +483,6 @@ select {
     background: #dbe4ef;
 }
 
-.map-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    color: #334155;
-    font-size: 0.86rem;
-    font-weight: 800;
-}
-
-.legend-color {
-    width: 13px;
-    height: 13px;
-    border-radius: 3px;
-}
-
-.legend-color.low {
-    background: var(--green);
-}
-
-.legend-color.medium {
-    background: var(--amber);
-}
-
-.legend-color.high {
-    background: var(--red);
-}
-
 .threshold-section {
     margin-top: 18px;
 }

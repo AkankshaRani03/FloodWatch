@@ -1,0 +1,60 @@
+services:
+  - type: web
+    name: floodwatch
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    plan: free
+
+    envVars:
+      - key: FLASK_DEBUG
+        value: "false"
+
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: HOST
+        value: "0.0.0.0"
+
+      - key: PORT
+        value: "10000"
+
+      # CORS — replace with your Render public URL after first deploy
+      - key: CORS_ORIGINS
+        value: "https://floodwatch.onrender.com"
+
+      # Google Earth Engine project
+      - key: GEE_PROJECT
+        value: "flood-prediction-0325"
+
+      # Risk thresholds
+      - key: RISK_THRESHOLD_HIGH
+        value: "0.70"
+      - key: RISK_THRESHOLD_MEDIUM
+        value: "0.40"
+      - key: EMAIL_ALERT_THRESHOLD
+        value: "0.50"
+
+      # Email (fill in your credentials in Render dashboard)
+      - key: EMAIL_NOTIFICATIONS_ENABLED
+        value: "true"
+      - key: SMTP_SERVER
+        value: "smtp.gmail.com"
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        sync: false          # set in Render dashboard
+      - key: SMTP_PASSWORD
+        sync: false          # set in Render dashboard
+      - key: SMTP_FROM_NAME
+        value: "FloodWatch"
+      - key: DEFAULT_ALERT_EMAIL
+        sync: false
+
+      # Web Push VAPID (generate at https://web-push-codelab.glitch.me/)
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_CLAIMS_EMAIL
+        sync: false

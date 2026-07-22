@@ -26,7 +26,8 @@ from database import (
     get_user_by_id, update_last_login, save_prediction,
     save_incident, create_notification, get_incidents,
     get_incident_count, get_notifications,
-    get_unread_notification_count, mark_all_notifications_read
+    get_unread_notification_count, mark_all_notifications_read,
+    mark_notification_read
 )
 from auth import hash_password, verify_password, validate_registration, validate_login, is_email
 import config
@@ -374,11 +375,14 @@ def system_status():
 @app.route('/stats/summary', methods=['GET'])
 def stats_summary():
     """Summary statistics for public dashboard"""
+    active_alerts = get_unread_notification_count()
+    pending_incidents = get_incident_count(status='pending')
+    total_incidents = get_incident_count()
     return jsonify({
-        'activeAlerts': 3,
+        'activeAlerts': active_alerts,
         'regionsMonitored': 12,
-        'reportsThisWeek': 24,
-        'teamsOnline': 8
+        'reportsThisWeek': pending_incidents,
+        'teamsOnline': total_incidents
     })
 
 
@@ -437,6 +441,42 @@ def community_incidents():
 @app.route('/api/community/notifications', methods=['GET'])
 def community_notifications():
     return jsonify(get_notifications(limit=20))
+
+
+@app.route('/api/notifications', methods=['GET'])
+def api_notifications():
+    unread_only = request.args.get('unread', '').lower() in ('1', 'true', 'yes')
+    alert_type = request.args.get('type')
+    return jsonify(get_notifications(limit=50, unread_only=unread_only, alert_type=alert_type))
+
+
+@app.route('/api/notifications/<int:notification_id>/read', methods=['POST'])
+def api_notification_mark_read(notification_id):
+    if mark_notification_read(notification_id):
+        return jsonify({'success': True})
+
+    return jsonify({'success': False, 'error': 'Notification not found'}), 404
+
+
+@app.route('/api/government/alerts', methods=['GET'])
+def government_alerts():
+    notifications = get_notifications(limit=20, alert_type='prediction')
+    alerts = []
+
+    for notification in notifications:
+        risk_level = (notification.get('risk_level') or 'MEDIUM').upper()
+        alerts.append({
+            'title': notification.get('message', 'Flood prediction alert'),
+            'level': risk_level.lower(),
+            'time': notification.get('created_at', ''),
+            'risk_level': risk_level,
+            'flood_probability': notification.get('flood_probability'),
+            'latitude': notification.get('latitude'),
+            'longitude': notification.get('longitude'),
+            'features': notification.get('features')
+        })
+
+    return jsonify(alerts)
 
 
 @app.route('/api/community/volunteers', methods=['GET'])
@@ -650,6 +690,20 @@ def predict():
             risk_level=response['risk_level'],
             email_sent=email_sent_flag
         )
+
+        if response['risk_level'] in ('MEDIUM', 'HIGH'):
+            create_notification(
+                message=(
+                    f"{response['risk_level']} flood risk predicted at "
+                    f"{lat:.4f}, {lon:.4f} ({response['flood_probability_percent']:.1f}%)."
+                ),
+                alert_type='prediction',
+                risk_level=response['risk_level'],
+                flood_probability=probability,
+                latitude=lat,
+                longitude=lon,
+                features=response.get('features')
+            )
         
         return jsonify(response), 200
         
@@ -730,10 +784,133 @@ def notifications_count():
     return jsonify({'count': get_unread_notification_count()})
 
 
+# ============================================================
+# WEB PUSH NOTIFICATION ROUTES
+# ============================================================
+
+@app.route('/api/push/vapid-public-key', methods=['GET'])
+def push_vapid_public_key():
+    """Return VAPID public key for client-side subscription."""
+    key = os.environ.get('VAPID_PUBLIC_KEY', '')
+    return jsonify({'public_key': key, 'available': bool(key)})
+
+
+@app.route('/api/push/subscribe', methods=['POST'])
+@login_required
+def push_subscribe():
+    """Save a Web Push subscription from the browser."""
+    try:
+        sys.path.append(str(Path(__file__).parent.parent / 'src'))
+        from push_notifications import (
+            init_push_subscriptions_table,
+            save_push_subscription,
+        )
+        init_push_subscriptions_table()
+
+        data     = request.get_json() or {}
+        endpoint = data.get('endpoint', '').strip()
+        keys     = data.get('keys', {})
+        p256dh   = keys.get('p256dh', '').strip()
+        auth     = keys.get('auth', '').strip()
+
+        if not endpoint or not p256dh or not auth:
+            return jsonify({'success': False, 'error': 'Missing subscription fields'}), 400
+
+        ok = save_push_subscription(
+            user_id  = session['user_id'],
+            endpoint = endpoint,
+            p256dh   = p256dh,
+            auth     = auth,
+        )
+        return jsonify({'success': ok}), 201 if ok else 500
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/push/unsubscribe', methods=['POST'])
+@login_required
+def push_unsubscribe():
+    """Remove a Web Push subscription."""
+    try:
+        from push_notifications import delete_push_subscription
+        data     = request.get_json() or {}
+        endpoint = data.get('endpoint', '').strip()
+        if not endpoint:
+            return jsonify({'success': False, 'error': 'Missing endpoint'}), 400
+        ok = delete_push_subscription(endpoint)
+        return jsonify({'success': ok})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/push/test', methods=['POST'])
+@login_required
+def push_test():
+    """Send a test push notification to the logged-in user."""
+    try:
+        from push_notifications import (
+            init_push_subscriptions_table,
+            broadcast_push_notification,
+        )
+        init_push_subscriptions_table()
+        sent = broadcast_push_notification(
+            payload = {
+                'title': 'FloodWatch Test',
+                'body':  'Push notifications are working correctly.',
+                'url':   '/notifications',
+                'tag':   'fw-test',
+            },
+            user_id = session['user_id'],
+        )
+        return jsonify({'success': True, 'sent': sent})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/notifications/mark_read', methods=['POST'])
 def notifications_mark_read():
     mark_all_notifications_read()
     return jsonify({'success': True})
+
+
+@app.route('/api/broadcast_alert', methods=['POST'])
+@login_required
+def broadcast_alert():
+    """
+    Explicitly push a prediction alert into the notifications table
+    so all other open dashboards pick it up on their next poll.
+    Called by the frontend after a MEDIUM / HIGH prediction result.
+    Body: { risk_level, flood_probability, latitude, longitude }
+    """
+    try:
+        data = request.get_json() or {}
+        risk_level = str(data.get('risk_level', 'MEDIUM')).upper()
+        probability = float(data.get('flood_probability', 0))
+        lat = data.get('latitude')
+        lon = data.get('longitude')
+
+        if risk_level not in ('MEDIUM', 'HIGH'):
+            return jsonify({'success': False, 'error': 'Only MEDIUM/HIGH alerts are broadcast'}), 400
+
+        pct = probability * 100 if probability <= 1 else probability
+
+        notification_id = create_notification(
+            message=(
+                f"\u26a0\ufe0f {risk_level} flood risk: {pct:.1f}% probability at "
+                f"{float(lat):.4f}, {float(lon):.4f}"
+            ),
+            alert_type='prediction',
+            risk_level=risk_level,
+            flood_probability=probability,
+            latitude=float(lat) if lat is not None else None,
+            longitude=float(lon) if lon is not None else None
+        )
+
+        return jsonify({'success': True, 'notification_id': notification_id}), 201
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
     print("\n🚀 Starting Flood Prediction API...")

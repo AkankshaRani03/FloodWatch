@@ -184,6 +184,30 @@ body{
     );
  
 }
+
+.brand-mark.has-logo{
+    width:64px;
+    height:64px;
+    min-width:64px;
+    min-height:64px;
+    padding:8px;
+    overflow:hidden;
+    background:#ffffff;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(11,31,51,.18);
+    flex-shrink:0;
+}
+
+.brand-mark.has-logo img{
+    width:auto;
+    height:auto;
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    display:block;
+    margin:auto;
+    border-radius:12px;
+}
  
 .eyebrow{
  
@@ -238,6 +262,74 @@ body{
 
 .brand-linkup:hover .brand-mark{
     transform:scale(1.05);
+}
+
+.map-mode-note{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:9px 12px;
+
+    border:1px solid #cfe1f4;
+
+    border-radius:8px;
+
+    color:#0f4f67;
+
+    background:#f8fbff;
+
+    font-size:.84rem;
+
+    font-weight:800;
+
+    letter-spacing:.04em;
+
+    text-transform:uppercase;
+
+    white-space:nowrap;
+
+}
+
+.leaflet-control-layers{
+
+    border:1px solid #bfd4ea !important;
+
+    border-radius:8px !important;
+
+    box-shadow:0 10px 28px rgba(15,23,42,.16) !important;
+
+    color:#0f172a;
+
+    font:700 13px/1.4 "Inter", "Segoe UI", Arial, sans-serif;
+
+    overflow:hidden;
+
+}
+
+.leaflet-control-layers-expanded{
+
+    padding:10px 12px;
+
+    background:#ffffff;
+
+}
+
+.leaflet-control-layers label{
+
+    margin:6px 0;
+
+}
+
+.leaflet-control-zoom a{
+
+    color:#0f4f67 !important;
+
+    font-weight:900;
+
 }
 
  
@@ -1314,4 +1406,181 @@ font-size:.9rem;
 
 }
 
+}
+
+
+/* Map location selection hint */
+.map-select-hint{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px 18px;
+    margin-bottom:16px;
+    background:linear-gradient(135deg,#eff6ff,#dbeafe);
+    border:1px solid #bfdbfe;
+    border-radius:10px;
+    color:#1e40af;
+    font-size:.92rem;
+    font-weight:600;
+}
+
+.map-select-hint i{
+    font-size:1.1rem;
+    color:#2563eb;
+}
+
+
+/* ==========================================================
+   PREDICTION ALERT BANNER
+   Shown on every dashboard when a MEDIUM or HIGH result
+   comes back from the prediction endpoint.
+   ========================================================== */
+
+.prediction-alert-banner {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-120px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 340px;
+    max-width: 560px;
+    padding: 18px 22px;
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(15,23,42,.22);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    color: #fff;
+    font-family: inherit;
+}
+
+.prediction-alert-banner.show {
+    transform: translateX(-50%) translateY(0);
+}
+
+.prediction-alert-banner.alert-medium {
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+
+.prediction-alert-banner.alert-high {
+    background: linear-gradient(135deg, #b91c1c, #dc2626);
+    animation: pulse-banner 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-banner {
+    0%, 100% { box-shadow: 0 16px 48px rgba(220,38,38,.35); }
+    50%       { box-shadow: 0 16px 60px rgba(220,38,38,.65); }
+}
+
+.prediction-alert-banner .alert-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    animation: shake 1s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    20%       { transform: rotate(-12deg); }
+    40%       { transform: rotate(12deg); }
+    60%       { transform: rotate(-8deg); }
+    80%       { transform: rotate(8deg); }
+}
+
+.prediction-alert-banner .alert-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.prediction-alert-banner .alert-content strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    margin-bottom: 4px;
+}
+
+.prediction-alert-banner .alert-content p {
+    font-size: .88rem;
+    opacity: .92;
+    margin: 0;
+}
+
+.prediction-alert-banner .alert-dismiss {
+    background: rgba(255,255,255,.2);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .2s;
+}
+
+.prediction-alert-banner .alert-dismiss:hover {
+    background: rgba(255,255,255,.35);
+}
+
+@media (max-width: 600px) {
+    .prediction-alert-banner {
+        min-width: unset;
+        width: calc(100% - 32px);
+        top: 12px;
+    }
+}
+
+/* ==========================================================
+   GLOBAL BACKGROUND DEPTH
+   Adds a very subtle gradient to the page background so
+   dashboards feel more polished than a flat grey.
+   ========================================================== */
+
+body {
+    background: linear-gradient(160deg, #eef4fb 0%, #f4f7fb 60%, #eaf3f3 100%);
+    min-height: 100vh;
+}
+
+/* ==========================================================
+   SERVICE CARDS — consistent border-radius and shadow across
+   all dashboards (citizen, community, government, admin).
+   ========================================================== */
+
+.service-card,
+.card,
+.dashboard-card {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* ==========================================================
+   PANEL HEADER — consistent across all dashboards
+   ========================================================== */
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.panel-header.compact {
+    margin-bottom: 12px;
+}
+
+.panel-header h2 {
+    font-size: 1.25rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.panel-header .eyebrow {
+    margin-bottom: 4px;
 }
