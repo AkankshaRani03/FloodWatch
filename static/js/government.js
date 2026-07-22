@@ -900,39 +900,7 @@ async function loadGovernmentAlerts(){
 
     catch{
 
-        updateGovernmentAlerts([
-
-            {
-
-                title:"High Flood Warning",
-
-                level:"high",
-
-                time:"5 min ago"
-
-            },
-
-            {
-
-                title:"Shelter Activated",
-
-                level:"medium",
-
-                time:"15 min ago"
-
-            },
-
-            {
-
-                title:"Road Closure",
-
-                level:"low",
-
-                time:"28 min ago"
-
-            }
-
-        ]);
+        updateGovernmentAlerts([]);
 
     }
 
@@ -950,6 +918,22 @@ function updateGovernmentAlerts(alerts){
         );
 
     if(!container) return;
+
+    if(!alerts || alerts.length===0){
+
+        container.innerHTML = `
+
+<div class="empty-state">
+    <i class="fa-solid fa-circle-check"></i>
+    <strong>No active prediction alerts</strong>
+    <small>Medium and high flood predictions will appear here until resolved.</small>
+</div>
+
+`;
+
+        return;
+
+    }
 
     container.innerHTML =
 

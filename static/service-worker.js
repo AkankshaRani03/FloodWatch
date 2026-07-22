@@ -11,8 +11,7 @@ const CORE_ASSETS = [
     "/",
     "/offline.html",
     "/manifest.json",
-    "/static/icons/floodwatch-gee-logo-source.png",
-    "/static/icons/floodwatch-gee-logo.png",
+    "/static/icons/floodwatch-logo.svg",
     "/static/css/common.css",
     "/static/css/mobile.css",
     "/static/js/common.js",
@@ -144,7 +143,7 @@ async function replayQueuedIncidents() {
 // PUSH NOTIFICATIONS
 // ============================================================
 self.addEventListener("push", event => {
-    let data = { title: "FloodWatch Alert", body: "Tap to view.", icon: "/static/icons/floodwatch-gee-logo-source.png", badge: "/static/icons/floodwatch-gee-logo-source.png" };
+    let data = { title: "FloodWatch Alert", body: "Tap to view.", icon: "/static/icons/floodwatch-logo.svg", badge: "/static/icons/floodwatch-logo.svg" };
 
     try {
         if (event.data) data = { ...data, ...event.data.json() };

@@ -18,6 +18,7 @@ sys.path.append(str(Path(__file__).parent.parent / 'src'))
 sys.path.append(str(Path(__file__).parent.parent / 'configs'))
 
 from feature_extraction_gee import initialize_gee, extract_features_for_location, get_safe_date_range
+from gee_setup import setup_gee_credentials_from_env
 from model_training import load_model
 from utils import validate_coordinates, format_prediction_response
 from email_notifications import send_flood_alert_email
@@ -117,7 +118,7 @@ def load_trained_model():
 
 
 def initialize_app():
-    """Initialize GEE and load model (both optional for graceful degradation)"""
+    """Initialize GEE, load model, and set up credentials (all optional for graceful degradation)"""
     global gee_initialized
     
     # Initialize database
@@ -126,6 +127,12 @@ def initialize_app():
         print("✓ Database initialized")
     except Exception as e:
         print(f"⚠️ Database init warning: {e}")
+    
+    # Set up GEE credentials from environment (if available)
+    try:
+        setup_gee_credentials_from_env()
+    except Exception as e:
+        print(f"⚠️ GEE credentials setup warning: {e}")
     
     # Initialize GEE with project (optional)
     gee_project = os.environ.get('GEE_PROJECT', getattr(config, 'GEE_PROJECT', 'flood-prediction-0325'))

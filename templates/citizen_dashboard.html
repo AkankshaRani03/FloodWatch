@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="FloodWatch">
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" type="image/png">
+    <link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-logo.svg') }}" type="image/svg+xml">
 
     <title>FloodWatch Citizen Portal</title>
 
@@ -36,8 +36,9 @@
     <a href="/" class="brand-linkup">
         <div class="brand-lockup">
 
-            <div class="brand-mark has-logo">
-                <img src="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" alt="Flood Prediction System logo">
+            <div class="brand-mark has-logo role-logo role-citizen">
+                <img src="{{ url_for('static', filename='icons/floodwatch-logo.svg') }}" alt="Flood Prediction System logo">
+                <span class="role-emblem"><i class="fa-solid fa-user-shield"></i></span>
             </div>
 
             <div>

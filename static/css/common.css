@@ -190,6 +190,7 @@ body{
     height:64px;
     min-width:64px;
     min-height:64px;
+    position:relative;
     padding:8px;
     overflow:hidden;
     background:#ffffff;
@@ -207,6 +208,41 @@ body{
     display:block;
     margin:auto;
     border-radius:12px;
+}
+
+.brand-mark.role-logo{
+    overflow:visible;
+}
+
+.brand-mark.role-logo img{
+    border-radius:12px;
+}
+
+.role-emblem{
+    position:absolute;
+    right:-7px;
+    bottom:-7px;
+    width:25px;
+    height:25px;
+    display:grid;
+    place-items:center;
+    border:2px solid #fff;
+    border-radius:999px;
+    color:#fff;
+    font-size:.72rem;
+    box-shadow:0 6px 14px rgba(15,23,42,.22);
+}
+
+.role-citizen .role-emblem{
+    background:#0ea5e9;
+}
+
+.role-community .role-emblem{
+    background:#0f766e;
+}
+
+.role-government .role-emblem{
+    background:#1d4ed8;
 }
  
 .eyebrow{
@@ -262,36 +298,6 @@ body{
 
 .brand-linkup:hover .brand-mark{
     transform:scale(1.05);
-}
-
-.map-mode-note{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    padding:9px 12px;
-
-    border:1px solid #cfe1f4;
-
-    border-radius:8px;
-
-    color:#0f4f67;
-
-    background:#f8fbff;
-
-    font-size:.84rem;
-
-    font-weight:800;
-
-    letter-spacing:.04em;
-
-    text-transform:uppercase;
-
-    white-space:nowrap;
-
 }
 
 .leaflet-control-layers{

@@ -195,8 +195,8 @@ def broadcast_push_notification(payload: dict, user_id: int = None) -> int:
         subs = get_all_subscriptions()
 
     # Ensure icon is set
-    payload.setdefault("icon",  "/static/icons/floodwatch-gee-logo-source.png")
-    payload.setdefault("badge", "/static/icons/floodwatch-gee-logo-source.png")
+    payload.setdefault("icon",  "/static/icons/floodwatch-logo.svg")
+    payload.setdefault("badge", "/static/icons/floodwatch-logo.svg")
 
     count = 0
     for sub in subs:

@@ -8,11 +8,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="FloodWatch">
 <link rel="manifest" href="/manifest.json">
-<link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" type="image/png">
+<link rel="icon" href="{{ url_for('static', filename='icons/floodwatch-logo.svg') }}" type="image/svg+xml">
 <title>FloodWatch — Flood Monitoring & Early Warning System</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
@@ -26,7 +27,7 @@
         <a href="/" class="brand-linkup">
             <div class="brand-lockup">
                 <div class="brand-mark has-logo">
-                    <img src="{{ url_for('static', filename='icons/floodwatch-gee-logo-source.png') }}" alt="Flood Prediction System logo">
+                    <img src="{{ url_for('static', filename='icons/floodwatch-logo.svg') }}" alt="Flood Prediction System logo">
                 </div>
                 <div>
                     <div class="eyebrow">Early Warning Network</div>
@@ -92,28 +93,28 @@
         <div class="portal-grid four-column">
  
             <a href="/citizen" class="portal-card">
-                <div class="portal-icon" style="background:#dbeafe;color:#1e40af;">👤</div>
+                <div class="portal-icon citizen-portal-icon"><i class="fa-solid fa-user-shield"></i></div>
                 <h4>Citizen</h4>
                 <p>Report waterlogging, view nearby alerts, and get evacuation guidance.</p>
                 <span class="portal-link">Open Citizen Dashboard →</span>
             </a>
  
             <a href="/community" class="portal-card">
-                <div class="portal-icon" style="background:#dcfce7;color:#166534;">🤝</div>
+                <div class="portal-icon community-portal-icon"><i class="fa-solid fa-people-group"></i></div>
                 <h4>Community</h4>
                 <p>Coordinate local volunteers, verify ground reports, manage shelters.</p>
                 <span class="portal-link">Open Community Dashboard →</span>
             </a>
  
             <a href="/government" class="portal-card">
-                <div class="portal-icon" style="background:#fef3c7;color:#92400e;">🏛️</div>
+                <div class="portal-icon government-portal-icon"><i class="fa-solid fa-landmark"></i></div>
                 <h4>Government</h4>
                 <p>Monitor district-wide risk, dispatch response teams, issue alerts.</p>
                 <span class="portal-link">Open Government Dashboard →</span>
             </a>
  
             <a href="/admin" class="portal-card">
-                <div class="portal-icon" style="background:#fee2e2;color:#991b1b;">⚙️</div>
+                <div class="portal-icon admin-portal-icon"><i class="fa-solid fa-gears"></i></div>
                 <h4>Admin</h4>
                 <p>Manage users, sensor feeds, and platform-wide configuration.</p>
                 <span class="portal-link">Open Admin Dashboard →</span>

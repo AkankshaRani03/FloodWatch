@@ -10,26 +10,43 @@ from datetime import datetime, timedelta
 def initialize_gee(project=None):
     """
     Initialize Google Earth Engine
-    Must be authenticated first using: earthengine authenticate
+    Supports three methods:
+    1. Service Account JSON (GOOGLE_APPLICATION_CREDENTIALS env var)
+    2. User credentials (from ee.Authenticate())
+    3. Default credentials
     
     Args:
         project (str): GEE Cloud Project ID (e.g., 'ee-yourproject')
                       If None, will try default initialization
     """
     try:
-        if project:
-            ee.Initialize(project=project)
+        import os
+        
+        # Method 1: Check for service account JSON in environment
+        if 'GOOGLE_APPLICATION_CREDENTIALS' in os.environ:
+            creds_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+            print(f"🔐 Using service account: {creds_path}")
+            ee.Initialize(project=project, opt_url='https://earthengine-highvolume.googleapis.com')
         else:
-            # Try to initialize with default project
-            ee.Initialize()
+            # Method 2: Try with just project (will use cached credentials)
+            if project:
+                print(f"🔐 Initializing with project: {project}")
+                ee.Initialize(project=project)
+            else:
+                print("🔐 Initializing with default credentials")
+                ee.Initialize()
+        
         print("✓ Google Earth Engine initialized successfully")
         return True
     except Exception as e:
         print(f"❌ GEE initialization failed: {e}")
-        print("\nTo fix this:")
-        print("1. Go to: https://code.earthengine.google.com")
-        print("2. Check your project name in the top (e.g., 'flood-prediction-0325')")
-        print("3. Initialize with: ee.Initialize(project='your-project-name')")
+        print("\n📖 TO FIX THIS:")
+        print("1. Create a GEE service account at:")
+        print("   https://console.cloud.google.com/iam-admin/serviceaccounts")
+        print("2. Create a JSON key file")
+        print("3. On Render, add environment variable:")
+        print("   GOOGLE_APPLICATION_CREDENTIALS = (paste JSON contents)")
+        print("   OR base64-encode the JSON and use a decode step")
         return False
 
 

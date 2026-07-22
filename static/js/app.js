@@ -27,7 +27,7 @@ function initMap() {
     }).setView([20.5937, 78.9629], 5);
 
     L.control.zoom({
-        position: 'topright'
+        position: 'bottomright'
     }).addTo(map);
 
     const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -68,7 +68,7 @@ function initMap() {
         Hybrid: hybridLayer
     }, null, {
         position: 'topleft',
-        collapsed: true
+        collapsed: false
     }).addTo(map);
 
     // Add click event to map

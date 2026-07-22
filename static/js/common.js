@@ -275,7 +275,7 @@ function initializeMap(containerId = "map") {
     }).setView([20.5937, 78.9629], 5);
 
     L.control.zoom({
-        position: "topright"
+        position: "bottomright"
     }).addTo(map);
 
     const streetLayer = L.tileLayer(
@@ -323,7 +323,7 @@ function initializeMap(containerId = "map") {
 
     L.control.layers(baseLayers, null, {
         position: "topleft",
-        collapsed: true
+        collapsed: false
     }).addTo(map);
  
     map.on("click", function (e) {

@@ -542,11 +542,17 @@ def get_notifications(limit=20, unread_only=False, alert_type=None):
         return []
 
 
-def get_unread_notification_count():
+def get_unread_notification_count(alert_type=None):
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT COUNT(*) FROM notifications WHERE is_read = 0')
+        if alert_type:
+            cursor.execute(
+                'SELECT COUNT(*) FROM notifications WHERE is_read = 0 AND alert_type = ?',
+                (alert_type,)
+            )
+        else:
+            cursor.execute('SELECT COUNT(*) FROM notifications WHERE is_read = 0')
         count = cursor.fetchone()[0]
         conn.close()
         return count

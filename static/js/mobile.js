@@ -37,7 +37,7 @@
         splash.id = "fwSplash";
         splash.innerHTML = `
             <div class="fw-splash-inner">
-                <img src="/static/icons/floodwatch-gee-logo-source.png"
+                <img src="/static/icons/floodwatch-logo.svg"
                      alt="FloodWatch"
                      class="fw-splash-logo">
                 <h1 class="fw-splash-title">FloodWatch</h1>
@@ -173,7 +173,7 @@
         banner.id        = "fwInstallBanner";
         banner.className = "fw-install-banner";
         banner.innerHTML = `
-            <img src="/static/icons/floodwatch-gee-logo-source.png"
+            <img src="/static/icons/floodwatch-logo.svg"
                  alt="FloodWatch" class="fw-install-icon">
             <div class="fw-install-text">
                 <strong>Install FloodWatch</strong>
@@ -456,8 +456,8 @@
         };
 
         addMeta("apple-mobile-web-app-status-bar-style", "black-translucent");
-        addLink("apple-touch-icon", "/static/icons/floodwatch-gee-logo-source.png");
-        addLink("apple-touch-startup-image", "/static/icons/floodwatch-gee-logo-source.png");
+        addLink("apple-touch-icon", "/static/icons/floodwatch-logo.svg");
+        addLink("apple-touch-startup-image", "/static/icons/floodwatch-logo.svg");
     }
 
 })();
