@@ -96,31 +96,55 @@ def login_required(f):
 
 
 def load_trained_model():
-    """Load the trained ML model"""
+    """Load the trained ML model - optional, won't crash if missing"""
     global model
     model_path = Path(__file__).parent.parent / 'models' / 'random_forest_flood_model.pkl'
     
     if not model_path.exists():
-        raise FileNotFoundError(f"Model file not found: {model_path}")
+        print(f"⚠️ Model file not found: {model_path}")
+        print("   App will run without predictions (UI still works)")
+        model = None
+        return False
     
-    model = load_model(str(model_path))
-    print("✓ Model loaded successfully")
+    try:
+        model = load_model(str(model_path))
+        print("✓ Model loaded successfully")
+        return True
+    except Exception as e:
+        print(f"⚠️ Failed to load model: {e}")
+        model = None
+        return False
 
 
 def initialize_app():
-    """Initialize GEE and load model"""
+    """Initialize GEE and load model (both optional for graceful degradation)"""
     global gee_initialized
     
     # Initialize database
-    init_database()
-    print("✓ Database initialized")
+    try:
+        init_database()
+        print("✓ Database initialized")
+    except Exception as e:
+        print(f"⚠️ Database init warning: {e}")
     
-    # Initialize GEE with project
+    # Initialize GEE with project (optional)
     gee_project = os.environ.get('GEE_PROJECT', getattr(config, 'GEE_PROJECT', 'flood-prediction-0325'))
-    gee_initialized = initialize_gee(project=gee_project)
+    try:
+        gee_initialized = initialize_gee(project=gee_project)
+        if gee_initialized:
+            print("✓ Google Earth Engine initialized")
+        else:
+            print("⚠️ GEE not initialized (predictions may not work)")
+    except Exception as e:
+        print(f"⚠️ GEE init warning: {e}")
+        gee_initialized = False
     
-    # Load ML model
-    load_trained_model()
+    # Load ML model (optional)
+    try:
+        load_trained_model()
+    except Exception as e:
+        print(f"⚠️ Model load warning: {e}")
+        model = None
 
 
 @app.route('/')
@@ -375,7 +399,7 @@ def system_status():
 @app.route('/stats/summary', methods=['GET'])
 def stats_summary():
     """Summary statistics for public dashboard"""
-    active_alerts = get_unread_notification_count()
+    active_alerts = get_unread_notification_count(alert_type='prediction')
     pending_incidents = get_incident_count(status='pending')
     total_incidents = get_incident_count()
     return jsonify({
@@ -460,7 +484,7 @@ def api_notification_mark_read(notification_id):
 
 @app.route('/api/government/alerts', methods=['GET'])
 def government_alerts():
-    notifications = get_notifications(limit=20, alert_type='prediction')
+    notifications = get_notifications(limit=20, unread_only=True, alert_type='prediction')
     alerts = []
 
     for notification in notifications:
@@ -623,6 +647,14 @@ def predict():
             features['slope_deg']
         ]]
         
+        # Check if model is available
+        if model is None:
+            return jsonify({
+                'error': 'Prediction model not available',
+                'message': 'The ML model is not loaded. Predictions unavailable.',
+                'features': features
+            }), 503
+        
         # Predict
         probability = model.predict_proba(feature_array)[0][1]
         
@@ -781,7 +813,7 @@ def citizen_alerts():
 
 @app.route('/notifications/count', methods=['GET'])
 def notifications_count():
-    return jsonify({'count': get_unread_notification_count()})
+    return jsonify({'count': get_unread_notification_count(alert_type='prediction')})
 
 
 # ============================================================
