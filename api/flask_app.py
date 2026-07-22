@@ -618,16 +618,12 @@ def predict():
         if not validate_coordinates(lat, lon):
             return jsonify({'error': 'Invalid coordinates'}), 400
         
-        # Check GEE status
-        if not gee_initialized:
-            return jsonify({'error': 'GEE not initialized'}), 500
-        
         # Get safe date range (avoid real-time data issues)
         start_date, end_date = get_safe_date_range(days_back=30, window_days=7)
         
         # Try GEE first, fallback to mock if unavailable
         if gee_initialized:
-            print(f"\n🛰️ Using GEE for real-time data...")
+            print(f"\n🛰️ Using GEE for satellite data...")
             features = extract_features_for_location(lat, lon, start_date, end_date)
             data_source = "GEE (Satellite)"
         else:
